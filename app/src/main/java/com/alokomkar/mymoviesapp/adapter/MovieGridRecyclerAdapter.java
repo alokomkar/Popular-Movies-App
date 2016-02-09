@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.alokomkar.mymoviesapp.R;
 import com.alokomkar.mymoviesapp.apimodels.MovieModel;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
 import com.alokomkar.mymoviesapp.interfaces.OnItemClickListener;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -25,12 +25,13 @@ import butterknife.ButterKnife;
  */
 public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecyclerAdapter.MovieGridViewHolder> {
 
+
     private List<MovieModel.MovieResult> mMovieResultArrayList;
     private Context mContext;
     private OnItemClickListener mOnItemClickListener;
     private String TAG = MovieGridRecyclerAdapter.class.getSimpleName();
 
-    public MovieGridRecyclerAdapter( Context mContext, List<MovieModel.MovieResult> mMovieResultArrayList, OnItemClickListener onItemClickListener) {
+    public MovieGridRecyclerAdapter(Context mContext, List<MovieModel.MovieResult> mMovieResultArrayList, OnItemClickListener onItemClickListener) {
         this.mMovieResultArrayList = mMovieResultArrayList;
         this.mContext = mContext;
         this.mOnItemClickListener = onItemClickListener;
@@ -45,14 +46,12 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
     @Override
     public void onBindViewHolder(MovieGridViewHolder holder, int position) {
         MovieModel.MovieResult movieResult = getItem(position);
-        Glide.with(mContext)
+        Picasso.with(mContext)
                 .load(NetworkApiGenerator.IMAGE_BASE_URL + movieResult.getPosterPath())
-                .asBitmap()
-                .override(150, 220)
-                .fitCenter()
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .placeholder(ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher))
+                .placeholder(ContextCompat.getDrawable(mContext, android.R.color.holo_blue_dark))
+                .error(ContextCompat.getDrawable(mContext, android.R.color.holo_red_dark))
                 .into(holder.movieGridItemImageView);
+        holder.titleTextView.setText(movieResult.getTitle());
     }
 
     public MovieModel.MovieResult getItem(int position) {
@@ -70,15 +69,18 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
         @Bind(R.id.movieGridItemImageView)
         ImageView movieGridItemImageView;
 
+        @Bind(R.id.titleTextView)
+        TextView titleTextView;
+
         public MovieGridViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener( this );
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            mOnItemClickListener.onItemClick( v, getAdapterPosition() );
+            mOnItemClickListener.onItemClick(v, getAdapterPosition());
         }
     }
 

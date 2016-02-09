@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.alokomkar.mymoviesapp.R;
 import com.alokomkar.mymoviesapp.apimodels.MovieModel;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
-import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -55,15 +55,15 @@ public class MovieDetailsFragment extends Fragment {
         if (bundle != null) {
             mMovieResult = bundle.getParcelable(MovieModel.class.getSimpleName());
             mTitleTextView.setText(mMovieResult.getOriginalTitle());
-            Glide.with(getActivity()).load(NetworkApiGenerator.IMAGE_BASE_URL + mMovieResult.getPosterPath())
-                    .asBitmap()
-                    .override(150, 220)
-                    .fitCenter()
-                    .placeholder(ContextCompat.getDrawable(getActivity(), android.R.color.holo_orange_light))
+            Picasso.with(getActivity()).load(NetworkApiGenerator.IMAGE_BASE_URL + mMovieResult.getPosterPath())
+                    .placeholder(ContextCompat.getDrawable(getActivity(), android.R.color.holo_blue_dark))
+                    .error(ContextCompat.getDrawable(getActivity(), android.R.color.holo_red_dark))
                     .into(mMoviePosterImageView);
-            Glide.with(getActivity()).load(NetworkApiGenerator.IMAGE_BASE_URL + mMovieResult.getBackdropPath())
-                    .asBitmap()
+            Picasso.with(getActivity()).load(NetworkApiGenerator.IMAGE_BASE_URL + mMovieResult.getBackdropPath())
+                    .fit()
                     .centerCrop()
+                    .placeholder(ContextCompat.getDrawable(getActivity(), android.R.color.holo_blue_dark))
+                    .error(ContextCompat.getDrawable(getActivity(), android.R.color.holo_red_dark))
                     .into(mMovieImageView);
             mReleaseDateTextView.setText(mMovieResult.getReleaseDate());
             mVoteAverageTextView.setText(String.valueOf(mMovieResult.getVoteAverage()) + "/10");

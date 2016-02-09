@@ -36,8 +36,6 @@ import retrofit.client.Response;
 
 public class MovieGridViewFragment extends Fragment {
 
-    private static String TAG = MovieGridViewFragment.class.getSimpleName();
-
     @Bind(R.id.movieGridRecyclerView)
     RecyclerView mMovieGridRecyclerView;
     @Bind(R.id.progressLayout)
@@ -48,6 +46,14 @@ public class MovieGridViewFragment extends Fragment {
     private MovieGridRecyclerAdapter mMovieGridRecyclerAdapter;
     private List<MovieModel.MovieResult> mMovieResultList;
     private OnMovieClickListener mOnMovieClickListener;
+    private String mFilterString = "";
+
+    private static final String FILTER_SELECTED = "filter_selected";
+
+    private static final String FILTER_MOST_POPULAR = "popularity.desc";
+    private static final String FILTER_HIGHEST_RATED = "vote_average.desc";
+
+    private static final String TAG = MovieGridViewFragment.class.getSimpleName();
 
     public MovieGridViewFragment() {
         // Required empty public constructor
@@ -56,7 +62,9 @@ public class MovieGridViewFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if( savedInstanceState != null ) {
+            mFilterString = savedInstanceState.getString( FILTER_SELECTED );
+        }
     }
 
     @Override
@@ -68,10 +76,18 @@ public class MovieGridViewFragment extends Fragment {
         setHasOptionsMenu(true);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mMovieGridRecyclerView.setLayoutManager(mGridLayoutManager);
-        mMovieGridRecyclerView.setItemAnimator( new DefaultItemAnimator() );
+        mMovieGridRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mMovieGridRecyclerView.setHasFixedSize(true);
         mMovieServiceInterface = NetworkApiGenerator.createService(MovieServiceInterface.class);
-        getMoviesList(null);
+
+        if( savedInstanceState == null ) {
+            getMoviesList(null);
+        }
+        else {
+            mFilterString = savedInstanceState.getString( FILTER_SELECTED );
+            getMoviesList(mFilterString);
+        }
+
 
         return view;
     }
@@ -79,8 +95,14 @@ public class MovieGridViewFragment extends Fragment {
     private void getMoviesList( String filterString ) {
 
         if( filterString != null ) {
-            mMovieResultList.clear();
+            mFilterString = filterString;
+            if( mMovieResultList != null ) {
+                mMovieResultList.clear();
+            }
             mMovieGridRecyclerAdapter = null;
+        }
+        else {
+            mFilterString = "";
         }
 
         mProgressLayout.setVisibility(View.VISIBLE);
@@ -137,7 +159,6 @@ public class MovieGridViewFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mOnMovieClickListener = (OnMovieClickListener) context;
         if (context instanceof OnMovieClickListener) {
             mOnMovieClickListener = (OnMovieClickListener) context;
         } else {
@@ -163,14 +184,21 @@ public class MovieGridViewFragment extends Fragment {
         switch ( item.getItemId() ) {
 
             case R.id.action_highest_rated :
-                getMoviesList("vote_average.desc");
+                getMoviesList(FILTER_HIGHEST_RATED);
                 return true;
+
             case R.id.action_most_popular :
-                getMoviesList("popularity.desc");
+                getMoviesList(FILTER_MOST_POPULAR);
                 return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
 
-
+    //Reference : http://code.hootsuite.com/orientation-changes-on-android/
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(FILTER_SELECTED, mFilterString);
+    }
 }

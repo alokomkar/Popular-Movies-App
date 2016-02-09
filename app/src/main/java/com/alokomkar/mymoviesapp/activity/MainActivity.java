@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
 
         mFragment = new MovieGridViewFragment();
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment).addToBackStack(null);
+        mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment);
         mFragmentTransaction.commit();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setTitle(R.string.app_name);

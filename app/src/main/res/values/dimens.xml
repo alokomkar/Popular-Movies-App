@@ -7,4 +7,7 @@
     <dimen name="margin5">5dp</dimen>
     <dimen name="margin16">16dp</dimen>
     <dimen name="margin8">8dp</dimen>
+    <dimen name="poster_height">100dp</dimen>
+    <dimen name="image_height">100dp</dimen>
+    <dimen name="title_height">32dp</dimen>
 </resources>

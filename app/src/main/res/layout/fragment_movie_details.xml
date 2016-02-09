@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/poster_height"
             android:gravity="center_vertical"
             android:id="@+id/titleLayout"
             android:orientation="vertical">
