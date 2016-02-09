@@ -4,6 +4,7 @@ import com.alokomkar.mymoviesapp.apimodels.MovieModel;
 
 import retrofit.Callback;
 import retrofit.http.GET;
+import retrofit.http.Query;
 
 /**
  * Created by cognitive on 2/8/16.
@@ -11,6 +12,6 @@ import retrofit.http.GET;
 public interface MovieServiceInterface {
 
     @GET("/discover/movie")
-    void getMoviesList( Callback<MovieModel> callback );
+    void getMoviesList( @Query("sort_by") String filterString, Callback<MovieModel> callback );
 
 }

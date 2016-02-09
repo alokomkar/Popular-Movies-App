@@ -1,6 +1,7 @@
 package com.alokomkar.mymoviesapp.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.alokomkar.mymoviesapp.apimodels.MovieModel;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
 import com.alokomkar.mymoviesapp.interfaces.OnItemClickListener;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.List;
 
@@ -43,7 +45,14 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
     @Override
     public void onBindViewHolder(MovieGridViewHolder holder, int position) {
         MovieModel.MovieResult movieResult = getItem(position);
-        Glide.with(mContext).load( NetworkApiGenerator.IMAGE_BASE_URL + movieResult.getPosterPath() ).asBitmap().into(holder.movieGridItemImageView);
+        Glide.with(mContext)
+                .load(NetworkApiGenerator.IMAGE_BASE_URL + movieResult.getPosterPath())
+                .asBitmap()
+                .override(150, 220)
+                .fitCenter()
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .placeholder(ContextCompat.getDrawable(mContext, R.mipmap.ic_launcher))
+                .into(holder.movieGridItemImageView);
     }
 
     public MovieModel.MovieResult getItem(int position) {

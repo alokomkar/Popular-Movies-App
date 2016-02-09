@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context="com.cc.mieon.user.activity">
+
+    <item
+        android:id="@+id/action_most_popular"
+        app:showAsAction="never"
+        android:title="@string/most_popular"/>
+
+    <item
+        android:id="@+id/action_highest_rated"
+        app:showAsAction="never"
+        android:title="@string/highest_rated"/>
+
+</menu>

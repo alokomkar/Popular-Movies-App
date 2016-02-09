@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">My Movies App</string>
+    <string name="app_name">Movie Night</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_settings">Settings</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="highest_rated">Highest Rated</string>
+    <string name="release_date">In Theatres : </string>
+    <string name="synopsis">Synopsis</string>
+    <string name="rating">Rating</string>
+    <string name="no_results">No results found</string>
 </resources>

@@ -2,11 +2,16 @@ package com.alokomkar.mymoviesapp.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -60,31 +65,35 @@ public class MovieGridViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie_grid_view, container, false);
         ButterKnife.bind(this, view);
-
+        setHasOptionsMenu(true);
         mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
         mMovieGridRecyclerView.setLayoutManager(mGridLayoutManager);
-
+        mMovieGridRecyclerView.setItemAnimator( new DefaultItemAnimator() );
+        mMovieGridRecyclerView.setHasFixedSize(true);
         mMovieServiceInterface = NetworkApiGenerator.createService(MovieServiceInterface.class);
-        getMoviesList();
+        getMoviesList(null);
 
         return view;
     }
 
-    private void getMoviesList() {
+    private void getMoviesList( String filterString ) {
+
+        if( filterString != null ) {
+            mMovieResultList.clear();
+            mMovieGridRecyclerAdapter = null;
+        }
+
         progressLayout.setVisibility(View.VISIBLE);
-        mMovieServiceInterface.getMoviesList(new Callback<MovieModel>() {
+        mMovieServiceInterface.getMoviesList(filterString, new Callback<MovieModel>() {
             @Override
             public void success(MovieModel movieModel, Response response) {
                 if (movieModel != null) {
-                    if ( movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0 ) {
-                        Log.d(TAG, "Movies size : " + movieModel.getMovieResults().size());
+                    if (movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0) {
                         setupAdapter(movieModel.getMovieResults());
+                    } else {
+                        Snackbar.make(getActivity().findViewById(android.R.id.custom), R.string.no_results, Snackbar.LENGTH_SHORT).show();
                     }
-                    else {
-                        //TODO Error message
-                    }
-                }
-                else {
+                } else {
                     progressLayout.setVisibility(View.GONE);
                 }
             }
@@ -106,12 +115,11 @@ public class MovieGridViewFragment extends Fragment {
                 @Override
                 public void onItemClick(View itemView, int itemPosition) {
                     MovieModel.MovieResult movieResult = mMovieGridRecyclerAdapter.getItem(itemPosition);
-                    Log.d(TAG, "Movie Result : OnItemClick : " + movieResult.getOriginalTitle());
                     mOnMovieClickListener.onMovieClick(movieResult);
-
                 }
             });
             mMovieGridRecyclerView.setAdapter(mMovieGridRecyclerAdapter);
+            mOnMovieClickListener.loadDefaultMovie( mMovieGridRecyclerAdapter.getItem(0) );
         } else {
             mMovieResultList.addAll(movieResults);
             mMovieGridRecyclerAdapter.notifyDataSetChanged();
@@ -143,4 +151,26 @@ public class MovieGridViewFragment extends Fragment {
         super.onDetach();
         mOnMovieClickListener = null;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_movie_list, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch ( item.getItemId() ) {
+
+            case R.id.action_highest_rated :
+                getMoviesList("vote_average.desc");
+                return true;
+            case R.id.action_most_popular :
+                getMoviesList("popularity.desc");
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }

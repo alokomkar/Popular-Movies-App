@@ -2,29 +2,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     tools:context="com.alokomkar.mymoviesapp.fragments.MovieDetailsFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@android:color/holo_green_dark"
             android:gravity="center_vertical"
             android:id="@+id/titleLayout"
             android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/movieImageView"
+                android:background="@android:color/holo_green_dark"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/titleTextView"
                 android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:text="My Movie"
+                tools:text="My Movie"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/title_font_size"/>
+                android:textSize="@dimen/title_font_size"
+                android:layout_gravity="left|center_vertical" />
 
-        </LinearLayout>
+        </FrameLayout>
 
 
         <ImageView
@@ -41,36 +50,65 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/releaseDateTextView"
-            android:text="2016"
-            style="@style/TextAppearance.AppCompat.Large"
+            android:text="@string/release_date"
             android:layout_alignTop="@+id/moviePosterImageView"
             android:layout_toRightOf="@+id/moviePosterImageView"
             android:layout_toEndOf="@+id/moviePosterImageView"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin" />
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:id="@+id/textView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/releaseDateTextView"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_below="@+id/textView"
+            android:layout_alignLeft="@+id/textView"
+            android:layout_alignStart="@+id/textView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rating"
+            android:layout_below="@+id/releaseDateTextView"
+            android:layout_alignLeft="@+id/releaseDateTextView"
+            android:layout_alignStart="@+id/releaseDateTextView"
+            android:id="@+id/ratingTitleTextView" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/voteAverageTextView"
-            android:text="8.1"
+            android:textColor="@android:color/black"
+            android:layout_marginLeft="@dimen/margin5"
             android:layout_below="@+id/releaseDateTextView"
-            android:layout_alignLeft="@+id/releaseDateTextView"
-            android:layout_alignStart="@+id/releaseDateTextView" />
+            android:layout_toRightOf="@+id/ratingTitleTextView"
+            android:layout_toEndOf="@+id/ratingTitleTextView" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:text="Fantastic movie"
-            android:id="@+id/synopsisTextView"
+            android:text="@string/synopsis"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
             android:layout_below="@+id/moviePosterImageView"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:id="@+id/synopsisTitleTextView" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:id="@+id/synopsisTextView"
+            android:layout_below="@+id/synopsisTitleTextView"
+            android:layout_alignLeft="@+id/synopsisTitleTextView"
+            android:layout_alignStart="@+id/synopsisTitleTextView" />
 
         <View
             android:layout_width="match_parent"
