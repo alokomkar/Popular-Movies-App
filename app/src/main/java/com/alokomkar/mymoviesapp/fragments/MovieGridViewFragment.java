@@ -74,7 +74,8 @@ public class MovieGridViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie_grid_view, container, false);
         ButterKnife.bind(this, view);
         setHasOptionsMenu(true);
-        mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+
+        mGridLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.column_count));
         mMovieGridRecyclerView.setLayoutManager(mGridLayoutManager);
         mMovieGridRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mMovieGridRecyclerView.setHasFixedSize(true);
