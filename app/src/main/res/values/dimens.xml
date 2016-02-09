@@ -10,4 +10,5 @@
     <dimen name="poster_height">100dp</dimen>
     <dimen name="image_height">100dp</dimen>
     <dimen name="title_height">32dp</dimen>
+    <dimen name="marginTop">16dp</dimen>
 </resources>

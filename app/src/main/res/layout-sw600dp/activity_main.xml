@@ -13,6 +13,11 @@
         android:layout_weight="1"
         tools:layout="@android:layout/list_content" />
 
+    <View
+        android:layout_width="@dimen/divider_height"
+        android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"/>
+
     <FrameLayout
         android:id="@+id/moviesDetailFrameLayout"
         android:layout_width="0dp"

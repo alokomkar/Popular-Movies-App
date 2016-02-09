@@ -2,6 +2,7 @@ package com.alokomkar.mymoviesapp.adapter;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +27,12 @@ import butterknife.ButterKnife;
 public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecyclerAdapter.MovieGridViewHolder> {
 
 
+
     private List<MovieModel.MovieResult> mMovieResultArrayList;
     private Context mContext;
     private OnItemClickListener mOnItemClickListener;
     private String TAG = MovieGridRecyclerAdapter.class.getSimpleName();
+    private Integer mSelectedItem = null;
 
     public MovieGridRecyclerAdapter(Context mContext, List<MovieModel.MovieResult> mMovieResultArrayList, OnItemClickListener onItemClickListener) {
         this.mMovieResultArrayList = mMovieResultArrayList;
@@ -52,6 +55,9 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
                 .error(ContextCompat.getDrawable(mContext, android.R.color.holo_red_dark))
                 .into(holder.movieGridItemImageView);
         holder.titleTextView.setText(movieResult.getTitle());
+        /*if( mSelectedItem != null ) {
+            holder.movieGridCardView.setCardBackgroundColor( movieResult.getId().equals( mSelectedItem ) ? android.R.color.darker_gray : android.R.color.transparent );
+        }*/
     }
 
     public MovieModel.MovieResult getItem(int position) {
@@ -72,6 +78,9 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
         @Bind(R.id.titleTextView)
         TextView titleTextView;
 
+        @Bind(R.id.movieGridCardView)
+        CardView movieGridCardView;
+
         public MovieGridViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -80,7 +89,9 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
 
         @Override
         public void onClick(View v) {
+            //mSelectedItem = getItem( getAdapterPosition() ).getId();
             mOnItemClickListener.onItemClick(v, getAdapterPosition());
+            //notifyDataSetChanged();
         }
     }
 
