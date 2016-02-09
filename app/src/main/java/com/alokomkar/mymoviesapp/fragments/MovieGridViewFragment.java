@@ -85,7 +85,7 @@ public class MovieGridViewFragment extends Fragment {
             getMoviesList(null);
         }
         else {
-            mFilterString = savedInstanceState.getString( FILTER_SELECTED );
+            mFilterString = savedInstanceState.getString( FILTER_SELECTED, null );
             getMoviesList(mFilterString);
         }
 
@@ -94,16 +94,12 @@ public class MovieGridViewFragment extends Fragment {
     }
 
     private void getMoviesList( String filterString ) {
-
+        mFilterString = filterString;
         if( filterString != null ) {
-            mFilterString = filterString;
             if( mMovieResultList != null ) {
                 mMovieResultList.clear();
             }
             mMovieGridRecyclerAdapter = null;
-        }
-        else {
-            mFilterString = "";
         }
 
         mProgressLayout.setVisibility(View.VISIBLE);
