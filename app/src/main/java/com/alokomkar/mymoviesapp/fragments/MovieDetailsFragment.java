@@ -20,17 +20,17 @@ import butterknife.ButterKnife;
 public class MovieDetailsFragment extends Fragment {
 
     @Bind(R.id.titleTextView)
-    TextView titleTextView;
+    TextView mTitleTextView;
     @Bind(R.id.moviePosterImageView)
-    ImageView moviePosterImageView;
+    ImageView mMoviePosterImageView;
     @Bind(R.id.releaseDateTextView)
-    TextView releaseDateTextView;
+    TextView mReleaseDateTextView;
     @Bind(R.id.voteAverageTextView)
-    TextView voteAverageTextView;
+    TextView mVoteAverageTextView;
     @Bind(R.id.synopsisTextView)
-    TextView synopsisTextView;
+    TextView mSynopsisTextView;
     @Bind(R.id.movieImageView)
-    ImageView movieImageView;
+    ImageView mMovieImageView;
     private MovieModel.MovieResult mMovieResult;
 
     public MovieDetailsFragment() {
@@ -54,20 +54,20 @@ public class MovieDetailsFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             mMovieResult = bundle.getParcelable(MovieModel.class.getSimpleName());
-            titleTextView.setText(mMovieResult.getOriginalTitle());
+            mTitleTextView.setText(mMovieResult.getOriginalTitle());
             Glide.with(getActivity()).load(NetworkApiGenerator.IMAGE_BASE_URL + mMovieResult.getPosterPath())
                     .asBitmap()
                     .override(150, 220)
                     .fitCenter()
                     .placeholder(ContextCompat.getDrawable(getActivity(), android.R.color.holo_orange_light))
-                    .into(moviePosterImageView);
+                    .into(mMoviePosterImageView);
             Glide.with(getActivity()).load(NetworkApiGenerator.IMAGE_BASE_URL + mMovieResult.getBackdropPath())
                     .asBitmap()
                     .centerCrop()
-                    .into(movieImageView);
-            releaseDateTextView.setText(mMovieResult.getReleaseDate());
-            voteAverageTextView.setText(String.valueOf(mMovieResult.getVoteAverage()) + "/10");
-            synopsisTextView.setText(mMovieResult.getOverview());
+                    .into(mMovieImageView);
+            mReleaseDateTextView.setText(mMovieResult.getReleaseDate());
+            mVoteAverageTextView.setText(String.valueOf(mMovieResult.getVoteAverage()) + "/10");
+            mSynopsisTextView.setText(mMovieResult.getOverview());
         }
 
         return view;

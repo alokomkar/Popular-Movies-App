@@ -41,7 +41,7 @@ public class MovieGridViewFragment extends Fragment {
     @Bind(R.id.movieGridRecyclerView)
     RecyclerView mMovieGridRecyclerView;
     @Bind(R.id.progressLayout)
-    RelativeLayout progressLayout;
+    RelativeLayout mProgressLayout;
 
     private GridLayoutManager mGridLayoutManager;
     private MovieServiceInterface mMovieServiceInterface;
@@ -83,7 +83,7 @@ public class MovieGridViewFragment extends Fragment {
             mMovieGridRecyclerAdapter = null;
         }
 
-        progressLayout.setVisibility(View.VISIBLE);
+        mProgressLayout.setVisibility(View.VISIBLE);
         mMovieServiceInterface.getMoviesList(filterString, new Callback<MovieModel>() {
             @Override
             public void success(MovieModel movieModel, Response response) {
@@ -94,14 +94,14 @@ public class MovieGridViewFragment extends Fragment {
                         Snackbar.make(getActivity().findViewById(android.R.id.custom), R.string.no_results, Snackbar.LENGTH_SHORT).show();
                     }
                 } else {
-                    progressLayout.setVisibility(View.GONE);
+                    mProgressLayout.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void failure(RetrofitError error) {
                 Log.e(TAG, "Error : " + error.getMessage());
-                progressLayout.setVisibility(View.GONE);
+                mProgressLayout.setVisibility(View.GONE);
             }
         });
     }
@@ -124,7 +124,7 @@ public class MovieGridViewFragment extends Fragment {
             mMovieResultList.addAll(movieResults);
             mMovieGridRecyclerAdapter.notifyDataSetChanged();
         }
-        progressLayout.setVisibility(View.GONE);
+        mProgressLayout.setVisibility(View.GONE);
 
     }
 

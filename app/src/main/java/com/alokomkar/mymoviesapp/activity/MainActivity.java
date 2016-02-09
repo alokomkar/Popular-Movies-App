@@ -78,12 +78,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             mFragment = new MovieDetailsFragment();
             mFragment.setArguments( bundle );
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-            if(  mTwoPaneMode ) {
-                mFragmentTransaction.replace(R.id.moviesDetailFrameLayout, mFragment, MOVIE_DETAILS_TAG);
-            }
-            else {
-                mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment, MOVIE_DETAILS_TAG);
-            }
+            mFragmentTransaction.replace(R.id.moviesDetailFrameLayout, mFragment, MOVIE_DETAILS_TAG);
             mFragmentTransaction.commit();
         }
 
