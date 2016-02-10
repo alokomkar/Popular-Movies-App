@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     private boolean mTwoPaneMode = false;
     private String mFilterString;
     private MovieModel mMovieModel;
+    private int mScrollPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
                     setTitle(savedInstanceState.getString(MOVIE_TITLE, getResources().getString(R.string.app_name)));
                     mFilterString = savedInstanceState.getString(MovieGridViewFragment.FILTER_SELECTED, null);
                     mMovieModel = savedInstanceState.getParcelable(MovieGridViewFragment.MOVIES_LIST);
+                    mScrollPosition = savedInstanceState.getInt(MovieGridViewFragment.SCROLL_POSITION, -1);
                 }
             }
         }
@@ -56,10 +58,10 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         outState.putString(MOVIE_TITLE, getTitle().toString());
         outState.putString(MovieGridViewFragment.FILTER_SELECTED, mFilterString);
         outState.putParcelable(MovieGridViewFragment.MOVIES_LIST, mMovieModel);
+        outState.putInt(MovieGridViewFragment.SCROLL_POSITION, mScrollPosition);
     }
 
     private void loadMoviesGridFragment() {
-
 
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
         mFragment = getSupportFragmentManager().findFragmentByTag(MovieGridViewFragment.class.getSimpleName());
@@ -73,6 +75,10 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         }
         if( mFilterString != null ) {
             bundle.putString( MovieGridViewFragment.FILTER_SELECTED, mFilterString );
+            mFragment.setArguments(bundle);
+        }
+        if( mScrollPosition != -1 ) {
+            bundle.putInt( MovieGridViewFragment.SCROLL_POSITION, mScrollPosition );
             mFragment.setArguments(bundle);
         }
         mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment, MovieGridViewFragment.class.getSimpleName());
@@ -120,10 +126,11 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     }
 
     @Override
-    public void storeFragmentParams(String filterString, MovieModel movieModel) {
+    public void storeFragmentParams(String filterString, MovieModel movieModel, int scrollPosition) {
         //TODO : NOTE : Find a better way to handle state changes
         this.mFilterString = filterString;
         this.mMovieModel = movieModel;
+        this.mScrollPosition = scrollPosition;
     }
 
 

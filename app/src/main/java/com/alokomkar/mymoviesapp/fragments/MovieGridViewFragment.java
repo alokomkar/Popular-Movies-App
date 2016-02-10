@@ -49,13 +49,15 @@ public class MovieGridViewFragment extends Fragment {
     private String mFilterString = "";
 
     public static final String FILTER_SELECTED = "filter_selected";
-
+    public static final String MOVIES_LIST = "movies_list";
+    public static final String SCROLL_POSITION = "scroll_position";
     private static final String FILTER_MOST_POPULAR = "popularity.desc";
     private static final String FILTER_HIGHEST_RATED = "vote_average.desc";
-    public static final String MOVIES_LIST = "movies_list";
+
 
     private static final String TAG = MovieGridViewFragment.class.getSimpleName();
     private MovieModel mMovieModel;
+    private int mScrollPosition;
 
     public MovieGridViewFragment() {
         // Required empty public constructor
@@ -108,6 +110,7 @@ public class MovieGridViewFragment extends Fragment {
         else {
             mFilterString = bundle.getString(FILTER_SELECTED, null);
             mMovieModel = bundle.getParcelable( MOVIES_LIST );
+            mScrollPosition = bundle.getInt( SCROLL_POSITION, -1 );
             if( mMovieModel != null && mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0 ) {
                 setupAdapter( mMovieModel.getMovieResults() );
             }
@@ -164,7 +167,8 @@ public class MovieGridViewFragment extends Fragment {
                 public void onItemClick(View itemView, int itemPosition) {
                     MovieModel.MovieResult movieResult = mMovieGridRecyclerAdapter.getItem(itemPosition);
                     mOnMovieClickListener.onMovieClick(movieResult);
-                    mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel);
+                    mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, itemPosition);
+                    mScrollPosition = itemPosition;
                 }
             });
             mMovieGridRecyclerView.setAdapter(mMovieGridRecyclerAdapter);
@@ -172,6 +176,10 @@ public class MovieGridViewFragment extends Fragment {
         } else {
             mMovieResultList.addAll(movieResults);
             mMovieGridRecyclerAdapter.notifyDataSetChanged();
+        }
+        if( mScrollPosition != -1 ) {
+            mMovieGridRecyclerView.getLayoutManager().scrollToPosition(mScrollPosition);
+            mScrollPosition = -1;
         }
         mProgressLayout.setVisibility(View.GONE);
 
