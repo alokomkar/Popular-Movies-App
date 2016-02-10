@@ -70,34 +70,64 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/rating"
+            android:text="@string/language"
+            android:id="@+id/languageTitleTextView"
             android:layout_below="@+id/releaseDateTextView"
             android:layout_alignLeft="@+id/releaseDateTextView"
-            android:layout_alignStart="@+id/releaseDateTextView"
-            android:id="@+id/ratingTitleTextView" />
+            android:layout_alignStart="@+id/releaseDateTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/languageTextView"
+            style="@style/TextAppearance.AppCompat.Large"
+            android:layout_below="@+id/languageTitleTextView"
+            android:layout_alignLeft="@+id/languageTitleTextView"
+            android:layout_alignStart="@+id/languageTitleTextView" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rating"
+            android:layout_marginTop="@dimen/marginTop"
+            android:id="@+id/ratingTitleTextView"
+            android:layout_below="@+id/moviePosterImageView"
+            android:layout_alignLeft="@+id/moviePosterImageView"
+            android:layout_alignStart="@+id/moviePosterImageView" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/voteAverageTextView"
-            android:textColor="@android:color/black"
             android:layout_marginLeft="@dimen/margin5"
-            android:layout_below="@+id/releaseDateTextView"
+            android:textColor="@android:color/black"
+            android:layout_above="@+id/movieRatingBar"
             android:layout_toRightOf="@+id/ratingTitleTextView"
             android:layout_toEndOf="@+id/ratingTitleTextView" />
+
+        <android.support.v7.widget.AppCompatRatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_marginRight="@dimen/marginTop"
+            android:id="@+id/movieRatingBar"
+            android:numStars="10"
+            android:stepSize="0.25"
+            android:layout_below="@+id/ratingTitleTextView"
+            android:layout_alignLeft="@+id/ratingTitleTextView"
+            android:layout_alignStart="@+id/ratingTitleTextView" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:text="@string/synopsis"
             android:layout_marginTop="@dimen/marginTop"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:layout_below="@+id/moviePosterImageView"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/synopsisTitleTextView" />
+            android:text="@string/synopsis"
+            android:id="@+id/synopsisTitleTextView"
+            android:layout_below="@+id/movieRatingBar"
+            android:layout_alignLeft="@+id/movieRatingBar"
+            android:layout_alignStart="@+id/movieRatingBar" />
 
         <TextView
             android:layout_width="match_parent"

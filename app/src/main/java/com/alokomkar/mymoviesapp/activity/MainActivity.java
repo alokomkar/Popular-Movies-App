@@ -14,6 +14,8 @@ import com.alokomkar.mymoviesapp.interfaces.OnMovieClickListener;
 
 public class MainActivity extends AppCompatActivity implements OnMovieClickListener {
 
+    private static final String TWO_PANE_MODE = "two_pane_mode";
+    private static final String MOVIE_TITLE = "movie_title";
     private Fragment mFragment;
     private FragmentTransaction mFragmentTransaction;
     private String MOVIE_DETAILS_TAG = MovieDetailsFragment.class.getSimpleName();
@@ -31,15 +33,34 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             if( savedInstanceState == null ) {
                 loadMoviesGridFragment();
             }
+            else {
+                mTwoPaneMode = savedInstanceState.getBoolean(TWO_PANE_MODE, false);
+                if( mTwoPaneMode ) getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                else {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    setTitle(savedInstanceState.getString(MOVIE_TITLE, getResources().getString(R.string.app_name)));
+                }
+            }
         }
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(TWO_PANE_MODE, mTwoPaneMode);
+        outState.putString(MOVIE_TITLE, getTitle().toString());
+    }
+
     private void loadMoviesGridFragment() {
 
-        mFragment = new MovieGridViewFragment();
+
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
-        mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment);
+        mFragment = getSupportFragmentManager().findFragmentByTag(MovieGridViewFragment.class.getSimpleName());
+        if( mFragment == null ) {
+            mFragment = new MovieGridViewFragment();
+        }
+        mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment, MovieGridViewFragment.class.getSimpleName());
         mFragmentTransaction.commit();
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         setTitle(R.string.app_name);
@@ -66,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             setTitle(movieResult.getTitle());
         }
 
-
     }
 
     @Override
@@ -92,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             super.onBackPressed();
         }
         else {
-            if( mFragment instanceof MovieDetailsFragment ) {
+            if( !getTitle().toString().equals(getResources().getString(R.string.app_name)) ) {
                 loadMoviesGridFragment();
             }
             else {

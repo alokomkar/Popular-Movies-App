@@ -52,8 +52,10 @@ public class MovieGridViewFragment extends Fragment {
 
     private static final String FILTER_MOST_POPULAR = "popularity.desc";
     private static final String FILTER_HIGHEST_RATED = "vote_average.desc";
+    private static final String MOVIES_LIST = "movies_list";
 
     private static final String TAG = MovieGridViewFragment.class.getSimpleName();
+    private MovieModel mMovieModel;
 
     public MovieGridViewFragment() {
         // Required empty public constructor
@@ -61,10 +63,14 @@ public class MovieGridViewFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         if( savedInstanceState != null ) {
-            mFilterString = savedInstanceState.getString( FILTER_SELECTED );
+            mFilterString = savedInstanceState.getString(FILTER_SELECTED);
+            //mMovieModel = savedInstanceState.getParcelable(MOVIES_LIST);
         }
+        //setRetainInstance(true);
+
     }
 
     @Override
@@ -85,8 +91,15 @@ public class MovieGridViewFragment extends Fragment {
             getMoviesList(null);
         }
         else {
-            mFilterString = savedInstanceState.getString( FILTER_SELECTED, null );
-            getMoviesList(mFilterString);
+            mFilterString = savedInstanceState.getString(FILTER_SELECTED, null);
+            mMovieModel = savedInstanceState.getParcelable( MOVIES_LIST );
+            if( mMovieModel != null && mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0 ) {
+                setupAdapter( mMovieModel.getMovieResults() );
+            }
+            else {
+                getMoviesList(mFilterString);
+            }
+
         }
 
 
@@ -107,6 +120,7 @@ public class MovieGridViewFragment extends Fragment {
             @Override
             public void success(MovieModel movieModel, Response response) {
                 if (movieModel != null) {
+                    mMovieModel = movieModel;
                     if (movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0) {
                         setupAdapter(movieModel.getMovieResults());
                     } else {
@@ -197,5 +211,6 @@ public class MovieGridViewFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(FILTER_SELECTED, mFilterString);
+        outState.putParcelable(MOVIES_LIST, mMovieModel);
     }
 }
