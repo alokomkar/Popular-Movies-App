@@ -1,5 +1,6 @@
 package com.alokomkar.mymoviesapp.generator;
 
+import com.alokomkar.mymoviesapp.BuildConfig;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ public class NetworkApiGenerator {
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w342/";
     public static final String BASE_URL = "http://api.themoviedb.org/3/";
-    public static final String API_KEY = "f4b2ebc8b5ef373a0c7e1d4d954fb181";
+    public static final String API_KEY = BuildConfig.API_KEY;
 
 
     public static <S> S createService(Class<S> serviceClass) {
