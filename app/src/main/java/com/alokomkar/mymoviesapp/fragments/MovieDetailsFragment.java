@@ -109,4 +109,6 @@ public class MovieDetailsFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putParcelable(MOVIE_RESULT, mMovieResult);
     }
+
+
 }

@@ -48,11 +48,11 @@ public class MovieGridViewFragment extends Fragment {
     private OnMovieClickListener mOnMovieClickListener;
     private String mFilterString = "";
 
-    private static final String FILTER_SELECTED = "filter_selected";
+    public static final String FILTER_SELECTED = "filter_selected";
 
     private static final String FILTER_MOST_POPULAR = "popularity.desc";
     private static final String FILTER_HIGHEST_RATED = "vote_average.desc";
-    private static final String MOVIES_LIST = "movies_list";
+    public static final String MOVIES_LIST = "movies_list";
 
     private static final String TAG = MovieGridViewFragment.class.getSimpleName();
     private MovieModel mMovieModel;
@@ -65,11 +65,12 @@ public class MovieGridViewFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        //setRetainInstance(true);
         if( savedInstanceState != null ) {
             mFilterString = savedInstanceState.getString(FILTER_SELECTED);
             //mMovieModel = savedInstanceState.getParcelable(MOVIES_LIST);
+            //setupAdapter( mMovieModel.getMovieResults() );
         }
-        //setRetainInstance(true);
 
     }
 
@@ -87,20 +88,34 @@ public class MovieGridViewFragment extends Fragment {
         mMovieGridRecyclerView.setHasFixedSize(true);
         mMovieServiceInterface = NetworkApiGenerator.createService(MovieServiceInterface.class);
 
-        if( savedInstanceState == null ) {
-            getMoviesList(null);
+        Bundle bundle = getArguments();
+        if( bundle == null ) {
+            if( savedInstanceState == null ) {
+                getMoviesList(null);
+            }
+            else {
+                mFilterString = savedInstanceState.getString(FILTER_SELECTED, null);
+                mMovieModel = savedInstanceState.getParcelable( MOVIES_LIST );
+                if( mMovieModel != null && mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0 ) {
+                    setupAdapter( mMovieModel.getMovieResults() );
+                }
+                else {
+                    getMoviesList(mFilterString);
+                }
+
+            }
         }
         else {
-            mFilterString = savedInstanceState.getString(FILTER_SELECTED, null);
-            mMovieModel = savedInstanceState.getParcelable( MOVIES_LIST );
+            mFilterString = bundle.getString(FILTER_SELECTED, null);
+            mMovieModel = bundle.getParcelable( MOVIES_LIST );
             if( mMovieModel != null && mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0 ) {
                 setupAdapter( mMovieModel.getMovieResults() );
             }
             else {
                 getMoviesList(mFilterString);
             }
-
         }
+
 
 
         return view;
@@ -149,6 +164,7 @@ public class MovieGridViewFragment extends Fragment {
                 public void onItemClick(View itemView, int itemPosition) {
                     MovieModel.MovieResult movieResult = mMovieGridRecyclerAdapter.getItem(itemPosition);
                     mOnMovieClickListener.onMovieClick(movieResult);
+                    mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel);
                 }
             });
             mMovieGridRecyclerView.setAdapter(mMovieGridRecyclerAdapter);

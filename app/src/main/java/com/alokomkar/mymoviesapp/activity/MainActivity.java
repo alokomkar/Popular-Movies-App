@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     private FragmentTransaction mFragmentTransaction;
     private String MOVIE_DETAILS_TAG = MovieDetailsFragment.class.getSimpleName();
     private boolean mTwoPaneMode = false;
+    private String mFilterString;
+    private MovieModel mMovieModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
                 else {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     setTitle(savedInstanceState.getString(MOVIE_TITLE, getResources().getString(R.string.app_name)));
+                    mFilterString = savedInstanceState.getString(MovieGridViewFragment.FILTER_SELECTED, null);
+                    mMovieModel = savedInstanceState.getParcelable(MovieGridViewFragment.MOVIES_LIST);
                 }
             }
         }
@@ -50,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         super.onSaveInstanceState(outState);
         outState.putBoolean(TWO_PANE_MODE, mTwoPaneMode);
         outState.putString(MOVIE_TITLE, getTitle().toString());
+        outState.putString(MovieGridViewFragment.FILTER_SELECTED, mFilterString);
+        outState.putParcelable(MovieGridViewFragment.MOVIES_LIST, mMovieModel);
     }
 
     private void loadMoviesGridFragment() {
@@ -59,6 +65,15 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         mFragment = getSupportFragmentManager().findFragmentByTag(MovieGridViewFragment.class.getSimpleName());
         if( mFragment == null ) {
             mFragment = new MovieGridViewFragment();
+        }
+        Bundle bundle = new Bundle();
+        if( mMovieModel != null ) {
+            bundle.putParcelable( MovieGridViewFragment.MOVIES_LIST, mMovieModel );
+            mFragment.setArguments(bundle);
+        }
+        if( mFilterString != null ) {
+            bundle.putString( MovieGridViewFragment.FILTER_SELECTED, mFilterString );
+            mFragment.setArguments(bundle);
         }
         mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment, MovieGridViewFragment.class.getSimpleName());
         mFragmentTransaction.commit();
@@ -104,6 +119,13 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
 
     }
 
+    @Override
+    public void storeFragmentParams(String filterString, MovieModel movieModel) {
+        //TODO : NOTE : Find a better way to handle state changes
+        this.mFilterString = filterString;
+        this.mMovieModel = movieModel;
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -112,7 +134,9 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             super.onBackPressed();
         }
         else {
+
             if( !getTitle().toString().equals(getResources().getString(R.string.app_name)) ) {
+                //TODO : NOTE : Find a better way : Since unable to make popbackstack() or popbackstackImmeidate() work as desired.
                 loadMoviesGridFragment();
             }
             else {
