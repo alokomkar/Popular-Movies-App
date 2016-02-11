@@ -1,6 +1,6 @@
 package com.alokomkar.mymoviesapp.interfaces;
 
-import com.alokomkar.mymoviesapp.apimodels.MovieModel;
+import com.alokomkar.mymoviesapp.models.MovieModel;
 
 /**
  * Created by cognitive on 2/8/16.

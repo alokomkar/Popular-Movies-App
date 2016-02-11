@@ -11,4 +11,8 @@
     <string name="rating">Rating</string>
     <string name="no_results">No results found</string>
     <string name="language">Language :</string>
+    <string name="no_reviews">No reviews yet</string>
+    <string name="unable_to_fetch_results">Unable to fetch results</string>
+    <string name="no_trailers">No trailers yet</string>
+    <string name="trailer_text">Trailers :</string>
 </resources>

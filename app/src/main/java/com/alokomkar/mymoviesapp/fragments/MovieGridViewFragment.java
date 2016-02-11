@@ -18,7 +18,7 @@ import android.widget.RelativeLayout;
 
 import com.alokomkar.mymoviesapp.R;
 import com.alokomkar.mymoviesapp.adapter.MovieGridRecyclerAdapter;
-import com.alokomkar.mymoviesapp.apimodels.MovieModel;
+import com.alokomkar.mymoviesapp.models.MovieModel;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
 import com.alokomkar.mymoviesapp.interfaces.OnItemClickListener;
 import com.alokomkar.mymoviesapp.interfaces.OnMovieClickListener;
@@ -142,7 +142,7 @@ public class MovieGridViewFragment extends Fragment {
                     if (movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0) {
                         setupAdapter(movieModel.getMovieResults());
                     } else {
-                        Snackbar.make(getActivity().findViewById(android.R.id.custom), R.string.no_results, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_results, Snackbar.LENGTH_SHORT).show();
                     }
                 } else {
                     mProgressLayout.setVisibility(View.GONE);

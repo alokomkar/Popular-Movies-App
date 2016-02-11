@@ -17,6 +17,7 @@ public class NetworkApiGenerator {
     private static final int QUERY_TIMEOUT_SECONDS = 30;
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w342/";
+    public static final String YOU_TUBE_TRILER_BASE_URL = "http://img.youtube.com/vi/";
     public static final String BASE_URL = "http://api.themoviedb.org/3/";
     public static final String API_KEY = BuildConfig.API_KEY;
 

@@ -11,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alokomkar.mymoviesapp.R;
-import com.alokomkar.mymoviesapp.models.MovieModel;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
 import com.alokomkar.mymoviesapp.interfaces.OnItemClickListener;
+import com.alokomkar.mymoviesapp.models.TrailerModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -22,55 +22,52 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by cognitive on 2/8/16.
+ * Created by cognitive on 2/11/16.
  */
-public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecyclerAdapter.MovieGridViewHolder> {
+public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecyclerAdapter.TrailerViewHolder> {
 
 
 
-    private List<MovieModel.MovieResult> mMovieResultArrayList;
+    private List<TrailerModel.TrailerResult> mTrailerResultList;
     private Context mContext;
     private OnItemClickListener mOnItemClickListener;
-    private String TAG = MovieGridRecyclerAdapter.class.getSimpleName();
-    private Integer mSelectedItem = null;
+    private String TAG = TrailerRecyclerAdapter.class.getSimpleName();
 
-    public MovieGridRecyclerAdapter(Context mContext, List<MovieModel.MovieResult> mMovieResultArrayList, OnItemClickListener onItemClickListener) {
-        this.mMovieResultArrayList = mMovieResultArrayList;
+    public TrailerRecyclerAdapter(Context mContext, List<TrailerModel.TrailerResult> trailerResultList, OnItemClickListener onItemClickListener) {
+        this.mTrailerResultList = trailerResultList;
         this.mContext = mContext;
         this.mOnItemClickListener = onItemClickListener;
     }
 
     @Override
-    public MovieGridViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public TrailerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View gridView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_grid_view_item, parent, false);
-        return new MovieGridViewHolder(gridView);
+        return new TrailerViewHolder(gridView);
     }
 
     @Override
-    public void onBindViewHolder(MovieGridViewHolder holder, int position) {
-        MovieModel.MovieResult movieResult = getItem(position);
+    public void onBindViewHolder(TrailerViewHolder holder, int position) {
+        TrailerModel.TrailerResult trailerResult = getItem(position);
         Picasso.with(mContext)
-                .load(NetworkApiGenerator.IMAGE_BASE_URL + movieResult.getPosterPath())
+                .load(NetworkApiGenerator.YOU_TUBE_TRILER_BASE_URL + trailerResult.getKey() + "/0.jpg")
                 .placeholder(ContextCompat.getDrawable(mContext, android.R.color.holo_blue_dark))
                 .error(ContextCompat.getDrawable(mContext, android.R.color.holo_red_dark))
                 .into(holder.movieGridItemImageView);
-        holder.titleTextView.setText(movieResult.getTitle());
-        /*if( mSelectedItem != null ) {
-            holder.movieGridCardView.setCardBackgroundColor( movieResult.getId().equals( mSelectedItem ) ? android.R.color.darker_gray : android.R.color.transparent );
-        }*/
+        holder.titleTextView.setText(trailerResult.getName());
+
     }
 
-    public MovieModel.MovieResult getItem(int position) {
+    public TrailerModel.TrailerResult getItem(int position) {
 
-        return mMovieResultArrayList.get(position);
+        return mTrailerResultList.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return mMovieResultArrayList.size();
+        return mTrailerResultList.size();
     }
 
-    public class MovieGridViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @Bind(R.id.movieGridItemImageView)
         ImageView movieGridItemImageView;
@@ -81,7 +78,7 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
         @Bind(R.id.movieGridCardView)
         CardView movieGridCardView;
 
-        public MovieGridViewHolder(View itemView) {
+        public TrailerViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
@@ -96,3 +93,4 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
     }
 
 }
+

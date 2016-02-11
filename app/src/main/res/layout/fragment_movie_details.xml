@@ -144,12 +144,45 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/divider_height"
+            android:id="@+id/synopsisDividerView"
             android:background="@android:color/darker_gray"
             android:layout_marginTop="@dimen/marginTop"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
             android:layout_marginBottom="@dimen/marginTop"
             android:layout_below="@+id/synopsisTextView"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trailerTitleTextView"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/marginTop"
+            android:layout_below="@+id/synopsisDividerView"
+            android:text="@string/trailer_text"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noTrailersTextView"
+            android:visibility="gone"
+            android:text="@string/no_trailers"
+            android:layout_marginLeft="@dimen/margin5"
+            android:textColor="@android:color/black"
+            android:layout_alignTop="@+id/trailerTitleTextView"
+            android:layout_toRightOf="@+id/trailerTitleTextView"
+            android:layout_toEndOf="@+id/trailerTitleTextView" />
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_height="@dimen/trailer_view_height"
+            android:layout_below="@+id/trailerTitleTextView"
+            android:scrollbars="none"
+            android:id="@+id/movieTrailerRecyclerView"
+            />
+
     </RelativeLayout>
 
 

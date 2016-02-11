@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardView="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/trailerCardView"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    cardView:cardCornerRadius="5dp"
+    cardView:cardElevation="2dp"
+    android:layout_margin="@dimen/margin8">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/trailer_view_height"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin5"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:background="@android:color/holo_blue_dark"
+            android:id="@+id/trailerItemImageView"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/title_height"
+            android:id="@+id/trailerTextView"
+            android:layout_marginLeft="@dimen/margin5"
+            android:layout_marginRight="@dimen/margin5"
+            android:background="@color/transparent_black"
+            android:textColor="@android:color/white"
+            android:text="@string/app_name"
+            android:gravity="center"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+
+</android.support.v7.widget.CardView>

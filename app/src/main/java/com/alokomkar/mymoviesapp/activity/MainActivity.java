@@ -1,5 +1,6 @@
 package com.alokomkar.mymoviesapp.activity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -7,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.alokomkar.mymoviesapp.R;
-import com.alokomkar.mymoviesapp.apimodels.MovieModel;
+import com.alokomkar.mymoviesapp.models.MovieModel;
 import com.alokomkar.mymoviesapp.fragments.MovieDetailsFragment;
 import com.alokomkar.mymoviesapp.fragments.MovieGridViewFragment;
 import com.alokomkar.mymoviesapp.interfaces.OnMovieClickListener;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         setContentView(R.layout.activity_main);
         if( findViewById(R.id.moviesDetailFrameLayout) != null ) {
             mTwoPaneMode = true;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         }
         else {
             if( savedInstanceState == null ) {
@@ -38,7 +40,10 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             }
             else {
                 mTwoPaneMode = savedInstanceState.getBoolean(TWO_PANE_MODE, false);
-                if( mTwoPaneMode ) getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                if( mTwoPaneMode ) {
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                }
                 else {
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     setTitle(savedInstanceState.getString(MOVIE_TITLE, getResources().getString(R.string.app_name)));
