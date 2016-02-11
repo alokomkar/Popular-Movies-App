@@ -1,5 +1,8 @@
 package com.alokomkar.mymoviesapp.fragments;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -177,6 +180,7 @@ public class MovieDetailsFragment extends Fragment {
                 @Override
                 public void onItemClick(View itemView, int itemPosition) {
                     //Play in youtube / browser
+                    watchYoutubeVideo( mTrailerResultList.get(itemPosition).getKey() );
                 }
             });
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager( getActivity(), LinearLayoutManager.HORIZONTAL, false );
@@ -188,6 +192,17 @@ public class MovieDetailsFragment extends Fragment {
             mTrailerRecyclerAdapter.notifyDataSetChanged();
         }
 
+    }
+
+    // http://stackoverflow.com/a/12439378/2648035
+    public void watchYoutubeVideo( String id ){
+        try{
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+            startActivity(intent);
+        }catch (ActivityNotFoundException ex){
+            Intent intent=new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v="+id));
+            startActivity(intent);
+        }
     }
 
 

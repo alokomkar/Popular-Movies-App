@@ -178,6 +178,7 @@
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
             android:layout_height="@dimen/trailer_view_height"
+            android:layout_marginBottom="@dimen/marginTop"
             android:layout_below="@+id/trailerTitleTextView"
             android:scrollbars="none"
             android:id="@+id/movieTrailerRecyclerView"

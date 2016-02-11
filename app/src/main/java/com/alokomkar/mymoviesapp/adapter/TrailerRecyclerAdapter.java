@@ -1,6 +1,7 @@
 package com.alokomkar.mymoviesapp.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -32,16 +33,20 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
     private Context mContext;
     private OnItemClickListener mOnItemClickListener;
     private String TAG = TrailerRecyclerAdapter.class.getSimpleName();
+    private int width = 0;
+    private int height = 0;
 
     public TrailerRecyclerAdapter(Context mContext, List<TrailerModel.TrailerResult> trailerResultList, OnItemClickListener onItemClickListener) {
         this.mTrailerResultList = trailerResultList;
         this.mContext = mContext;
         this.mOnItemClickListener = onItemClickListener;
+        this.width = (int) (220 * Resources.getSystem().getDisplayMetrics().density);
+        this.height = (int) (100 * Resources.getSystem().getDisplayMetrics().density);
     }
 
     @Override
     public TrailerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View gridView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_grid_view_item, parent, false);
+        View gridView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_trailer_item, parent, false);
         return new TrailerViewHolder(gridView);
     }
 
@@ -52,8 +57,10 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
                 .load(NetworkApiGenerator.YOU_TUBE_TRILER_BASE_URL + trailerResult.getKey() + "/0.jpg")
                 .placeholder(ContextCompat.getDrawable(mContext, android.R.color.holo_blue_dark))
                 .error(ContextCompat.getDrawable(mContext, android.R.color.holo_red_dark))
-                .into(holder.movieGridItemImageView);
-        holder.titleTextView.setText(trailerResult.getName());
+                .resize(width, height)
+                .centerCrop()
+                .into(holder.trailerItemImageView);
+        holder.trailerTextView.setText(trailerResult.getName());
 
     }
 
@@ -69,14 +76,14 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
 
     public class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @Bind(R.id.movieGridItemImageView)
-        ImageView movieGridItemImageView;
+        @Bind(R.id.trailerItemImageView)
+        ImageView trailerItemImageView;
 
-        @Bind(R.id.titleTextView)
-        TextView titleTextView;
+        @Bind(R.id.trailerTextView)
+        TextView trailerTextView;
 
-        @Bind(R.id.movieGridCardView)
-        CardView movieGridCardView;
+        @Bind(R.id.trailerCardView)
+        CardView trailerCardView;
 
         public TrailerViewHolder(View itemView) {
             super(itemView);
