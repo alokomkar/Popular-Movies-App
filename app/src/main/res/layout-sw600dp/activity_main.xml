@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <fragment
-        android:id="@+id/fragment_forecast"
+        android:id="@+id/fragment_movie_grid"
         android:name="com.alokomkar.mymoviesapp.fragments.MovieGridViewFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
