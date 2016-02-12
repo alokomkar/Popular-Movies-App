@@ -3,7 +3,6 @@ package com.alokomkar.mymoviesapp.adapter;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,8 +39,8 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
         this.mTrailerResultList = trailerResultList;
         this.mContext = mContext;
         this.mOnItemClickListener = onItemClickListener;
-        this.width = (int) (220 * Resources.getSystem().getDisplayMetrics().density);
-        this.height = (int) (100 * Resources.getSystem().getDisplayMetrics().density);
+        this.width = (int) (225 * Resources.getSystem().getDisplayMetrics().density);
+        this.height = (int) (150 * Resources.getSystem().getDisplayMetrics().density);
     }
 
     @Override
@@ -57,7 +56,7 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
                 .load(NetworkApiGenerator.YOU_TUBE_TRILER_BASE_URL + trailerResult.getKey() + "/0.jpg")
                 .placeholder(ContextCompat.getDrawable(mContext, android.R.color.holo_blue_dark))
                 .error(ContextCompat.getDrawable(mContext, android.R.color.holo_red_dark))
-                .resize(width, height)
+                .fit()
                 .centerCrop()
                 .into(holder.trailerItemImageView);
         holder.trailerTextView.setText(trailerResult.getName());
@@ -81,9 +80,6 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
 
         @Bind(R.id.trailerTextView)
         TextView trailerTextView;
-
-        @Bind(R.id.trailerCardView)
-        CardView trailerCardView;
 
         public TrailerViewHolder(View itemView) {
             super(itemView);

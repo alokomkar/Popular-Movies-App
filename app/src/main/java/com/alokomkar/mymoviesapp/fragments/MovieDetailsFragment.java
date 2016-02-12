@@ -154,7 +154,6 @@ public class MovieDetailsFragment extends Fragment {
                     mTrailerModel = trailerModel;
                     setupTrailerAdapter(trailerModel);
                 } else {
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_trailers, Snackbar.LENGTH_SHORT).show();
                     mNoTrailersTextView.setVisibility(View.VISIBLE);
                     mMovieTrailerRecyclerView.setVisibility(View.GONE);
                 }

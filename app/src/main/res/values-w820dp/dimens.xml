@@ -7,7 +7,6 @@
     <dimen name="image_height">100dp</dimen>
     <dimen name="title_height">48dp</dimen>
     <dimen name="marginTop">32dp</dimen>
-    <dimen name="trailer_view_height">125dp</dimen>
-    <dimen name="trailer_view_width">155dp</dimen>
+    <dimen name="trailer_view_height">150dp</dimen>
 
 </resources>

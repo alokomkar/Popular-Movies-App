@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none"
     tools:context="com.alokomkar.mymoviesapp.fragments.MovieDetailsFragment">
 
@@ -183,6 +184,15 @@
             android:scrollbars="none"
             android:id="@+id/movieTrailerRecyclerView"
             />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_favorite_normal"
+            android:layout_gravity="right|bottom"
+            android:layout_alignBottom="@+id/textView"
+            android:layout_alignRight="@+id/synopsisTextView"
+            android:layout_alignEnd="@+id/synopsisTextView" />
 
     </RelativeLayout>
 
