@@ -15,4 +15,7 @@
     <string name="unable_to_fetch_results">Unable to fetch results</string>
     <string name="no_trailers">No trailers yet</string>
     <string name="trailer_text">Trailers :</string>
+    <string name="reviews_text">Reviews :</string>
+    <string name="author">Author :</string>
+    <string name="review_url">Review URL :</string>
 </resources>

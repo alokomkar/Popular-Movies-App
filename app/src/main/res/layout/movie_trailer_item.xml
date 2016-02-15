@@ -17,20 +17,21 @@
             android:background="@android:color/holo_blue_dark"
             android:id="@+id/trailerItemImageView"/>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <!--<TextView
+            android:layout_width="225dp"
             android:layout_height="wrap_content"
             android:maxLines="2"
+            android:singleLine="true"
             android:ellipsize="marquee"
             android:id="@+id/trailerTextView"
             android:text="@string/app_name"
             android:textColor="@android:color/white"
             android:layout_marginBottom="@dimen/margin5"
-            android:gravity="center"
+            android:gravity="left"
             android:layout_gravity="center"
             android:layout_below="@+id/trailerItemImageView"
             android:layout_alignLeft="@+id/trailerItemImageView"
-            android:layout_alignStart="@+id/trailerItemImageView" />
+            android:layout_alignStart="@+id/trailerItemImageView" />-->
 
 
 </RelativeLayout>

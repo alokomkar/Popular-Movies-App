@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:scrollbars="none"
     tools:context="com.alokomkar.mymoviesapp.fragments.MovieDetailsFragment">
 
@@ -47,6 +46,22 @@
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:id="@+id/moviePosterImageView"
             />
+
+        <FrameLayout
+            android:layout_width="150dp"
+            android:layout_height="220dp"
+            android:id="@+id/favoriteTrailerLayout"
+            android:visibility="gone"
+            android:background="@android:color/transparent"
+            android:layout_above="@+id/ratingTitleTextView"
+            android:layout_alignLeft="@+id/moviePosterImageView"
+            android:layout_alignStart="@+id/moviePosterImageView">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_like"
+                android:layout_gravity="center"/>
+        </FrameLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -185,12 +200,57 @@
             android:id="@+id/movieTrailerRecyclerView"
             />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:id="@+id/trailerDividerView"
+            android:background="@android:color/darker_gray"
+            android:layout_marginTop="@dimen/marginTop"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/marginTop"
+            android:layout_below="@+id/movieTrailerRecyclerView"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reviewTitleTextView"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/marginTop"
+            android:layout_below="@+id/trailerDividerView"
+            android:text="@string/reviews_text"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/noReviewsTextView"
+            android:visibility="gone"
+            android:text="@string/no_reviews"
+            android:layout_marginLeft="@dimen/margin5"
+            android:textColor="@android:color/black"
+            android:layout_alignTop="@+id/reviewTitleTextView"
+            android:layout_toRightOf="@+id/reviewTitleTextView"
+            android:layout_toEndOf="@+id/reviewTitleTextView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/margin16"
+            android:layout_marginRight="@dimen/margin16"
+            android:layout_marginBottom="@dimen/marginTop"
+            android:layout_below="@+id/reviewTitleTextView"
+            android:id="@+id/reviewsLayout">
+        </LinearLayout>
+
         <android.support.design.widget.FloatingActionButton
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:src="@drawable/ic_favorite_normal"
+            android:id="@+id/favoriteMovieButton"
             android:layout_gravity="right|bottom"
-            android:layout_alignBottom="@+id/textView"
+            android:layout_marginRight="@dimen/margin16"
+            android:layout_alignBottom="@+id/moviePosterImageView"
             android:layout_alignRight="@+id/synopsisTextView"
             android:layout_alignEnd="@+id/synopsisTextView" />
 

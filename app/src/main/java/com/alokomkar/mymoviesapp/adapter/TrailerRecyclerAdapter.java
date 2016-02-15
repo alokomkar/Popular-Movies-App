@@ -1,14 +1,12 @@
 package com.alokomkar.mymoviesapp.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.alokomkar.mymoviesapp.R;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
@@ -32,15 +30,11 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
     private Context mContext;
     private OnItemClickListener mOnItemClickListener;
     private String TAG = TrailerRecyclerAdapter.class.getSimpleName();
-    private int width = 0;
-    private int height = 0;
 
     public TrailerRecyclerAdapter(Context mContext, List<TrailerModel.TrailerResult> trailerResultList, OnItemClickListener onItemClickListener) {
         this.mTrailerResultList = trailerResultList;
         this.mContext = mContext;
         this.mOnItemClickListener = onItemClickListener;
-        this.width = (int) (225 * Resources.getSystem().getDisplayMetrics().density);
-        this.height = (int) (150 * Resources.getSystem().getDisplayMetrics().density);
     }
 
     @Override
@@ -59,7 +53,7 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
                 .fit()
                 .centerCrop()
                 .into(holder.trailerItemImageView);
-        holder.trailerTextView.setText(trailerResult.getName());
+        //holder.trailerTextView.setText(trailerResult.getName());
 
     }
 
@@ -78,8 +72,8 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
         @Bind(R.id.trailerItemImageView)
         ImageView trailerItemImageView;
 
-        @Bind(R.id.trailerTextView)
-        TextView trailerTextView;
+        /*@Bind(R.id.trailerTextView)
+        TextView trailerTextView;*/
 
         public TrailerViewHolder(View itemView) {
             super(itemView);
