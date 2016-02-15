@@ -45,6 +45,9 @@ import retrofit.client.Response;
 public class MovieDetailsFragment extends Fragment {
 
     private static final String MOVIE_RESULT = "movie_result";
+    private static final String MOVIE_REVIEWS = "movie_reviews";
+    private static final String MOVIE_TRAILERS = "movie_trailers";
+
     @Bind(R.id.titleTextView)
     TextView mTitleTextView;
     @Bind(R.id.moviePosterImageView)
@@ -82,8 +85,6 @@ public class MovieDetailsFragment extends Fragment {
 
     private TrailerRecyclerAdapter mTrailerRecyclerAdapter;
     private AnimationSet mFavoriteAnimationSet;
-    private Animation mFadeInAnimation;
-    private Animation mFadeOutAnimation;
 
     public MovieDetailsFragment() {
         // Required empty public constructor
@@ -95,6 +96,8 @@ public class MovieDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             mMovieResult = savedInstanceState.getParcelable(MOVIE_RESULT);
+            mTrailerModel = savedInstanceState.getParcelable(MOVIE_TRAILERS);
+            mReviewsModel = savedInstanceState.getParcelable(MOVIE_REVIEWS);
         }
     }
 
@@ -113,8 +116,19 @@ public class MovieDetailsFragment extends Fragment {
                 setValues(mMovieResult);
             }
         } else {
+
             mMovieResult = savedInstanceState.getParcelable(MOVIE_RESULT);
+            mTrailerModel = savedInstanceState.getParcelable(MOVIE_TRAILERS);
+            mReviewsModel = savedInstanceState.getParcelable(MOVIE_REVIEWS);
+
             setValues(mMovieResult);
+
+            if( mReviewsModel != null && mReviewsModel.getReviewsResults() != null )
+                setupReviews();
+
+            if( mTrailerModel != null && mTrailerModel.getTrailerResults() != null )
+                setupTrailerAdapter(mTrailerModel);
+
         }
 
 
@@ -146,11 +160,11 @@ public class MovieDetailsFragment extends Fragment {
         fetchTrailers();
         fetchReviews();
 
-        mFadeInAnimation = new AlphaAnimation(0, 1);
+        Animation mFadeInAnimation = new AlphaAnimation(0, 1);
         mFadeInAnimation.setInterpolator(new DecelerateInterpolator());
         mFadeInAnimation.setDuration(1000);
 
-        mFadeOutAnimation = new AlphaAnimation(1, 0);
+        Animation mFadeOutAnimation = new AlphaAnimation(1, 0);
         mFadeOutAnimation.setInterpolator(new AccelerateInterpolator());
         mFadeOutAnimation.setStartOffset(1000);
         mFadeOutAnimation.setDuration(1000);
@@ -218,7 +232,7 @@ public class MovieDetailsFragment extends Fragment {
             ReviewViewHolder reviewViewHolder = new ReviewViewHolder( reviewDetailsLayout );
             reviewViewHolder.authorTextView.setText( reviewsResult.getAuthor() );
             reviewViewHolder.reviewUrlTextView.setText( reviewsResult.getUrl() );
-            reviewViewHolder.reviewTextView.setText( reviewsResult.getContent() );
+            reviewViewHolder.reviewTextView.setText(reviewsResult.getContent());
             mReviewsLayout.addView( reviewDetailsLayout, layoutParams );
         }
 
@@ -293,6 +307,8 @@ public class MovieDetailsFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(MOVIE_RESULT, mMovieResult);
+        outState.putParcelable(MOVIE_REVIEWS, mReviewsModel);
+        outState.putParcelable(MOVIE_TRAILERS, mTrailerModel);
     }
 
     static class ReviewViewHolder {

@@ -3,13 +3,16 @@ package com.alokomkar.mymoviesapp.models;
 /**
  * Created by cognitive on 2/11/16.
  */
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewsModel {
+public class ReviewsModel implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -117,7 +120,7 @@ public class ReviewsModel {
         this.totalResults = totalResults;
     }
 
-    public class ReviewsResult {
+    public static class ReviewsResult implements Parcelable {
 
         @SerializedName("id")
         @Expose
@@ -204,6 +207,72 @@ public class ReviewsModel {
             this.url = url;
         }
 
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.id);
+            dest.writeString(this.author);
+            dest.writeString(this.content);
+            dest.writeString(this.url);
+        }
+
+        public ReviewsResult() {
+        }
+
+        protected ReviewsResult(Parcel in) {
+            this.id = in.readString();
+            this.author = in.readString();
+            this.content = in.readString();
+            this.url = in.readString();
+        }
+
+        public static final Parcelable.Creator<ReviewsResult> CREATOR = new Parcelable.Creator<ReviewsResult>() {
+            public ReviewsResult createFromParcel(Parcel source) {
+                return new ReviewsResult(source);
+            }
+
+            public ReviewsResult[] newArray(int size) {
+                return new ReviewsResult[size];
+            }
+        };
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeValue(this.page);
+        dest.writeTypedList(reviewsResults);
+        dest.writeValue(this.totalPages);
+        dest.writeValue(this.totalResults);
+    }
+
+    public ReviewsModel() {
+    }
+
+    protected ReviewsModel(Parcel in) {
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.page = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.reviewsResults = in.createTypedArrayList(ReviewsResult.CREATOR);
+        this.totalPages = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.totalResults = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<ReviewsModel> CREATOR = new Parcelable.Creator<ReviewsModel>() {
+        public ReviewsModel createFromParcel(Parcel source) {
+            return new ReviewsModel(source);
+        }
+
+        public ReviewsModel[] newArray(int size) {
+            return new ReviewsModel[size];
+        }
+    };
 }

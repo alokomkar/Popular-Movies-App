@@ -3,13 +3,16 @@ package com.alokomkar.mymoviesapp.models;
 /**
  * Created by cognitive on 2/11/16.
  */
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrailerModel {
+public class TrailerModel implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -54,7 +57,7 @@ public class TrailerModel {
         this.trailerResults = trailerResults;
     }
 
-    public class TrailerResult {
+    public static class TrailerResult implements Parcelable {
 
         @SerializedName("id")
         @Expose
@@ -204,6 +207,72 @@ public class TrailerModel {
             this.type = type;
         }
 
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(this.id);
+            dest.writeString(this.iso6391);
+            dest.writeString(this.key);
+            dest.writeString(this.name);
+            dest.writeString(this.site);
+            dest.writeValue(this.size);
+            dest.writeString(this.type);
+        }
+
+        public TrailerResult() {
+        }
+
+        protected TrailerResult(Parcel in) {
+            this.id = in.readString();
+            this.iso6391 = in.readString();
+            this.key = in.readString();
+            this.name = in.readString();
+            this.site = in.readString();
+            this.size = (Integer) in.readValue(Integer.class.getClassLoader());
+            this.type = in.readString();
+        }
+
+        public static final Parcelable.Creator<TrailerResult> CREATOR = new Parcelable.Creator<TrailerResult>() {
+            public TrailerResult createFromParcel(Parcel source) {
+                return new TrailerResult(source);
+            }
+
+            public TrailerResult[] newArray(int size) {
+                return new TrailerResult[size];
+            }
+        };
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeTypedList(trailerResults);
+    }
+
+    public TrailerModel() {
+    }
+
+    protected TrailerModel(Parcel in) {
+        this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.trailerResults = in.createTypedArrayList(TrailerResult.CREATOR);
+    }
+
+    public static final Parcelable.Creator<TrailerModel> CREATOR = new Parcelable.Creator<TrailerModel>() {
+        public TrailerModel createFromParcel(Parcel source) {
+            return new TrailerModel(source);
+        }
+
+        public TrailerModel[] newArray(int size) {
+            return new TrailerModel[size];
+        }
+    };
 }
