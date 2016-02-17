@@ -8,12 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.alokomkar.mymoviesapp.R;
-import com.alokomkar.mymoviesapp.models.MovieModel;
 import com.alokomkar.mymoviesapp.fragments.MovieDetailsFragment;
 import com.alokomkar.mymoviesapp.fragments.MovieGridViewFragment;
+import com.alokomkar.mymoviesapp.interfaces.OnFavoriteClickListener;
 import com.alokomkar.mymoviesapp.interfaces.OnMovieClickListener;
+import com.alokomkar.mymoviesapp.models.MovieModel;
 
-public class MainActivity extends AppCompatActivity implements OnMovieClickListener {
+public class MainActivity extends AppCompatActivity implements OnMovieClickListener, OnFavoriteClickListener {
 
     private static final String TWO_PANE_MODE = "two_pane_mode";
     private static final String MOVIE_TITLE = "movie_title";
@@ -24,12 +25,21 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     private String mFilterString;
     private MovieModel mMovieModel;
     private int mScrollPosition = -1;
+    public static final String IS_FAVORITE = "isFavorite";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // http://www.rushorm.com/
+        // Rush is initialized asynchronously to recieve a callback after it initialized
+        // set an InitializeListener on the config object
+
+
+
+
         if( findViewById(R.id.moviesDetailFrameLayout) != null ) {
             mTwoPaneMode = true;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -55,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         }
 
     }
+
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -94,10 +106,11 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     }
 
     @Override
-    public void onMovieClick(MovieModel.MovieResult movieResult) {
+    public void onMovieClick(MovieModel.MovieResult movieResult, boolean isFavorite) {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable( MovieModel.class.getSimpleName(), movieResult );
+        bundle.putBoolean(IS_FAVORITE, isFavorite);
         mFragment = new MovieDetailsFragment();
         mFragment.setArguments( bundle );
         mFragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -116,11 +129,12 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     }
 
     @Override
-    public void loadDefaultMovie(MovieModel.MovieResult movieResult) {
+    public void loadDefaultMovie(MovieModel.MovieResult movieResult, boolean isFavorite) {
 
         if( mTwoPaneMode ) {
             Bundle bundle = new Bundle();
             bundle.putParcelable( MovieModel.class.getSimpleName(), movieResult );
+            bundle.putBoolean(IS_FAVORITE, isFavorite);
             mFragment = new MovieDetailsFragment();
             mFragment.setArguments( bundle );
             mFragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -169,4 +183,12 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     }
 
 
+    @Override
+    public void onFavoriteClick(MovieModel.MovieResult movieResult, boolean isFavorite) {
+        mFragment = getSupportFragmentManager().findFragmentByTag(MovieGridViewFragment.class.getSimpleName());
+        if( mFragment != null ) {
+            ((MovieGridViewFragment)mFragment).onFavoriteClick( movieResult, isFavorite );
+        }
+
+    }
 }

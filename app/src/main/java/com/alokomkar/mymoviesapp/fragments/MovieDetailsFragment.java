@@ -1,6 +1,7 @@
 package com.alokomkar.mymoviesapp.fragments;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,8 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alokomkar.mymoviesapp.R;
+import com.alokomkar.mymoviesapp.activity.MainActivity;
 import com.alokomkar.mymoviesapp.adapter.TrailerRecyclerAdapter;
 import com.alokomkar.mymoviesapp.generator.NetworkApiGenerator;
+import com.alokomkar.mymoviesapp.interfaces.OnFavoriteClickListener;
 import com.alokomkar.mymoviesapp.interfaces.OnItemClickListener;
 import com.alokomkar.mymoviesapp.interfaces.retrofit.MovieServiceInterface;
 import com.alokomkar.mymoviesapp.models.MovieModel;
@@ -34,10 +37,12 @@ import com.alokomkar.mymoviesapp.models.ReviewsModel;
 import com.alokomkar.mymoviesapp.models.TrailerModel;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import co.uk.rushorm.core.RushCallback;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -86,6 +91,9 @@ public class MovieDetailsFragment extends Fragment {
     private TrailerRecyclerAdapter mTrailerRecyclerAdapter;
     private AnimationSet mFavoriteAnimationSet;
 
+    private boolean isFavorite = false;
+    private OnFavoriteClickListener mOnFavoriteClickListener;
+
     public MovieDetailsFragment() {
         // Required empty public constructor
     }
@@ -98,6 +106,7 @@ public class MovieDetailsFragment extends Fragment {
             mMovieResult = savedInstanceState.getParcelable(MOVIE_RESULT);
             mTrailerModel = savedInstanceState.getParcelable(MOVIE_TRAILERS);
             mReviewsModel = savedInstanceState.getParcelable(MOVIE_REVIEWS);
+            isFavorite = savedInstanceState.getBoolean(MainActivity.IS_FAVORITE);
         }
     }
 
@@ -113,6 +122,7 @@ public class MovieDetailsFragment extends Fragment {
             Bundle bundle = getArguments();
             if (bundle != null) {
                 mMovieResult = bundle.getParcelable(MovieModel.class.getSimpleName());
+                isFavorite = bundle.getBoolean(MainActivity.IS_FAVORITE, false);
                 setValues(mMovieResult);
             }
         } else {
@@ -120,14 +130,24 @@ public class MovieDetailsFragment extends Fragment {
             mMovieResult = savedInstanceState.getParcelable(MOVIE_RESULT);
             mTrailerModel = savedInstanceState.getParcelable(MOVIE_TRAILERS);
             mReviewsModel = savedInstanceState.getParcelable(MOVIE_REVIEWS);
-
+            isFavorite = savedInstanceState.getBoolean(MainActivity.IS_FAVORITE);
             setValues(mMovieResult);
 
-            if( mReviewsModel != null && mReviewsModel.getReviewsResults() != null )
+            if( mReviewsModel != null && mReviewsModel.getReviewsResults() != null ) {
+                mReviewsLayout.removeAllViews();
                 setupReviews();
+            }
 
-            if( mTrailerModel != null && mTrailerModel.getTrailerResults() != null )
+
+            if( mTrailerModel != null && mTrailerModel.getTrailerResults() != null ) {
+                mTrailerRecyclerAdapter = null;
+                if( mTrailerResultList == null ) {
+                    mTrailerResultList = new ArrayList<>();
+                }
+                mTrailerResultList.clear();
                 setupTrailerAdapter(mTrailerModel);
+            }
+
 
         }
 
@@ -192,15 +212,45 @@ public class MovieDetailsFragment extends Fragment {
         mFavoriteMovieButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFavoriteTrailerLayout.startAnimation(mFavoriteAnimationSet);
+
+                if (isFavorite) {
+
+                    mFavoriteMovieButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_favorite_normal));
+                    mMovieResult.delete(new RushCallback() {
+                        @Override
+                        public void complete() {
+
+                        }
+                    });
+                    isFavorite = false;
+                    mOnFavoriteClickListener.onFavoriteClick(mMovieResult, isFavorite);
+                } else {
+                    mFavoriteTrailerLayout.startAnimation(mFavoriteAnimationSet);
+                    mFavoriteMovieButton.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_favorite_selected));
+                    mMovieResult.save(new RushCallback() {
+                        @Override
+                        public void complete() {
+
+                        }
+                    });
+                    isFavorite = true;
+                    mOnFavoriteClickListener.onFavoriteClick(mMovieResult, isFavorite);
+                }
+
+
             }
         });
+
+        mFavoriteMovieButton.setImageDrawable( isFavorite ?
+                ContextCompat.getDrawable(getActivity(), R.drawable.ic_favorite_selected) :
+                ContextCompat.getDrawable(getActivity(), R.drawable.ic_favorite_normal));
+
 
 
     }
 
     private void fetchReviews() {
-        mMovieServiceInterface.getReviews(String.valueOf(mMovieResult.getId()), new Callback<ReviewsModel>() {
+        mMovieServiceInterface.getReviews(String.valueOf(mMovieResult.getMovieId()), new Callback<ReviewsModel>() {
             @Override
             public void success(ReviewsModel reviewsModel, Response response) {
                 if (reviewsModel != null && reviewsModel.getReviewsResults() != null && reviewsModel.getReviewsResults().size() > 0) {
@@ -223,10 +273,11 @@ public class MovieDetailsFragment extends Fragment {
 
     private void setupReviews() {
 
+        mReviewsLayout.removeAllViews();
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        layoutParams.setMargins(0 ,0, 0, 16);
+        layoutParams.setMargins(0, 0, 0, 16);
         for( ReviewsModel.ReviewsResult reviewsResult : mReviewsModel.getReviewsResults()) {
             View reviewDetailsLayout = layoutInflater.inflate(R.layout.movie_review_item, null);
             ReviewViewHolder reviewViewHolder = new ReviewViewHolder( reviewDetailsLayout );
@@ -239,7 +290,7 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void fetchTrailers() {
-        mMovieServiceInterface.getTrailers(String.valueOf(mMovieResult.getId()), new Callback<TrailerModel>() {
+        mMovieServiceInterface.getTrailers(String.valueOf(mMovieResult.getMovieId()), new Callback<TrailerModel>() {
             @Override
             public void success(TrailerModel trailerModel, Response response) {
                 if (trailerModel != null && trailerModel.getTrailerResults() != null && trailerModel.getTrailerResults().size() > 0) {
@@ -278,7 +329,12 @@ public class MovieDetailsFragment extends Fragment {
             mMovieTrailerRecyclerView.setLayoutManager(linearLayoutManager);
             mMovieTrailerRecyclerView.setAdapter(mTrailerRecyclerAdapter);
         } else {
-            mTrailerResultList.addAll(trailerModel.getTrailerResults());
+
+            if( mTrailerResultList == null ) {
+                mTrailerResultList = new ArrayList<>();
+                mTrailerResultList.addAll(trailerModel.getTrailerResults());
+            }
+
             mTrailerRecyclerAdapter.notifyDataSetChanged();
         }
 
@@ -309,6 +365,7 @@ public class MovieDetailsFragment extends Fragment {
         outState.putParcelable(MOVIE_RESULT, mMovieResult);
         outState.putParcelable(MOVIE_REVIEWS, mReviewsModel);
         outState.putParcelable(MOVIE_TRAILERS, mTrailerModel);
+        outState.putBoolean(MainActivity.IS_FAVORITE, isFavorite);
     }
 
     static class ReviewViewHolder {
@@ -323,5 +380,22 @@ public class MovieDetailsFragment extends Fragment {
         ReviewViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFavoriteClickListener) {
+            mOnFavoriteClickListener = (OnFavoriteClickListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFavoriteClickListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mOnFavoriteClickListener = null;
     }
 }

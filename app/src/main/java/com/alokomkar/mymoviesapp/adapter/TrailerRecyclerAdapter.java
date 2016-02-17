@@ -83,7 +83,7 @@ public class TrailerRecyclerAdapter extends RecyclerView.Adapter<TrailerRecycler
 
         @Override
         public void onClick(View v) {
-            //mSelectedItem = getItem( getAdapterPosition() ).getId();
+            //mSelectedItem = getItem( getAdapterPosition() ).getMovieId();
             mOnItemClickListener.onItemClick(v, getAdapterPosition());
             //notifyDataSetChanged();
         }

@@ -30,6 +30,9 @@ def getApiKey() {
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://maven.rushorm.com"
+    }
 }
 
 dependencies {
@@ -49,4 +52,7 @@ dependencies {
     //Retrofit
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
+
+    //RushORM
+    compile 'co.uk.rushorm:rushandroid:1.1.11'
 }

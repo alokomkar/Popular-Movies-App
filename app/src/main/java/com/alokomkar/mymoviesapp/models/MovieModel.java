@@ -12,6 +12,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.uk.rushorm.core.RushObject;
+
 public class MovieModel implements Parcelable {
 
     @SerializedName("page")
@@ -99,7 +101,7 @@ public class MovieModel implements Parcelable {
         this.totalResults = totalResults;
     }
 
-    public static class MovieResult implements Parcelable {
+    public static class MovieResult extends RushObject implements Parcelable  {
 
         @SerializedName("adult")
         @Expose
@@ -112,7 +114,7 @@ public class MovieModel implements Parcelable {
         private List<Integer> genreIds = new ArrayList<Integer>();
         @SerializedName("id")
         @Expose
-        private Integer id;
+        private Integer movieId;
         @SerializedName("original_language")
         @Expose
         private String originalLanguage;
@@ -203,8 +205,8 @@ public class MovieModel implements Parcelable {
          * @return
          * The id
          */
-        public Integer getId() {
-            return id;
+        public Integer getMovieId() {
+            return movieId;
         }
 
         /**
@@ -212,8 +214,8 @@ public class MovieModel implements Parcelable {
          * @param id
          * The id
          */
-        public void setId(Integer id) {
-            this.id = id;
+        public void setMovieId(Integer id) {
+            this.movieId = id;
         }
 
         /**
@@ -407,7 +409,7 @@ public class MovieModel implements Parcelable {
             dest.writeByte(adult ? (byte) 1 : (byte) 0);
             dest.writeString(this.backdropPath);
             dest.writeList(this.genreIds);
-            dest.writeValue(this.id);
+            dest.writeValue(this.movieId);
             dest.writeString(this.originalLanguage);
             dest.writeString(this.originalTitle);
             dest.writeString(this.overview);
@@ -428,7 +430,7 @@ public class MovieModel implements Parcelable {
             this.backdropPath = in.readString();
             this.genreIds = new ArrayList<Integer>();
             in.readList(this.genreIds, List.class.getClassLoader());
-            this.id = (Integer) in.readValue(Integer.class.getClassLoader());
+            this.movieId = (Integer) in.readValue(Integer.class.getClassLoader());
             this.originalLanguage = in.readString();
             this.originalTitle = in.readString();
             this.overview = in.readString();
@@ -450,6 +452,22 @@ public class MovieModel implements Parcelable {
                 return new MovieResult[size];
             }
         };
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            MovieResult that = (MovieResult) o;
+
+            return movieId.equals(that.movieId);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return movieId.hashCode();
+        }
     }
 
     @Override

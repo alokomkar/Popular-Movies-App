@@ -18,4 +18,6 @@
     <string name="reviews_text">Reviews :</string>
     <string name="author">Author :</string>
     <string name="review_url">Review URL :</string>
+    <string name="favorite">Favorites</string>
+    <string name="no_favorites">No favorites yet</string>
 </resources>

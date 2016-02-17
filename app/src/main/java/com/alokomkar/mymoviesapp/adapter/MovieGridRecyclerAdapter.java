@@ -56,7 +56,7 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
                 .into(holder.movieGridItemImageView);
         holder.titleTextView.setText(movieResult.getTitle());
         /*if( mSelectedItem != null ) {
-            holder.movieGridCardView.setCardBackgroundColor( movieResult.getId().equals( mSelectedItem ) ? android.R.color.darker_gray : android.R.color.transparent );
+            holder.movieGridCardView.setCardBackgroundColor( movieResult.getMovieId().equals( mSelectedItem ) ? android.R.color.darker_gray : android.R.color.transparent );
         }*/
     }
 
@@ -89,7 +89,7 @@ public class MovieGridRecyclerAdapter extends RecyclerView.Adapter<MovieGridRecy
 
         @Override
         public void onClick(View v) {
-            //mSelectedItem = getItem( getAdapterPosition() ).getId();
+            //mSelectedItem = getItem( getAdapterPosition() ).getMovieId();
             mOnItemClickListener.onItemClick(v, getAdapterPosition());
             //notifyDataSetChanged();
         }
