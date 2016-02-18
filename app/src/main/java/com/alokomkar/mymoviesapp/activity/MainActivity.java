@@ -185,7 +185,14 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
 
     @Override
     public void onFavoriteClick(MovieModel.MovieResult movieResult, boolean isFavorite) {
-        mFragment = getSupportFragmentManager().findFragmentByTag(MovieGridViewFragment.class.getSimpleName());
+
+        if(  mTwoPaneMode ) {
+            mFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_movie_grid);
+        }
+        else {
+            mFragment = getSupportFragmentManager().findFragmentByTag(MovieGridViewFragment.class.getSimpleName());
+        }
+
         if( mFragment != null ) {
             ((MovieGridViewFragment)mFragment).onFavoriteClick( movieResult, isFavorite );
         }
