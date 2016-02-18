@@ -1,6 +1,7 @@
 package com.alokomkar.mymoviesapp.fragments;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -62,9 +63,10 @@ public class MovieGridViewFragment extends Fragment {
     private MovieModel mMovieModel;
     private MovieModel mFavoriteMovieModel;
     private int mScrollPosition;
-    private List<MovieModel.MovieResult> mFavoriteMoviesList = new ArrayList<>();
+    private List<MovieModel.MovieResult> mFavoriteMoviesList;
 
     private boolean isOtherTaskFinished = false;
+    private AsyncTask<Void, Void, Void> mFavoriteMoviesFetchTask;
 
     public MovieGridViewFragment() {
         // Required empty public constructor
@@ -97,12 +99,12 @@ public class MovieGridViewFragment extends Fragment {
         mMovieGridRecyclerView.setHasFixedSize(true);
         mMovieServiceInterface = NetworkApiGenerator.createService(MovieServiceInterface.class);
 
-
-
         Bundle bundle = getArguments();
         if( bundle == null ) {
             if( savedInstanceState == null ) {
-                getMoviesList(null);
+                //View created for the first time
+                getFavoriteMovies();
+                getMovies( null );
             }
             else {
                 mFilterString = savedInstanceState.getString(FILTER_SELECTED, null);
@@ -138,6 +140,75 @@ public class MovieGridViewFragment extends Fragment {
         return view;
     }
 
+    private void getMovies( String filterString ) {
+        mMovieServiceInterface.getMoviesList(filterString, new Callback<MovieModel>() {
+            @Override
+            public void success(MovieModel movieModel, Response response) {
+                if (movieModel != null) {
+                    mMovieModel = movieModel;
+                    if (movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0) {
+                        setupAdapter(movieModel.getMovieResults());
+                    } else {
+                        dismissProgressView();
+                        Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_results, Snackbar.LENGTH_SHORT).show();
+                    }
+                } else {
+                    dismissProgressView();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(TAG, "Error : " + error.getMessage());
+                dismissProgressView();
+            }
+        });
+    }
+
+    private void getFavoriteMovies() {
+        if( mFavoriteMoviesList == null ) {
+            mFavoriteMoviesFetchTask = new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    // Fetch from local DB
+                    new RushSearch().find(MovieModel.MovieResult.class, new RushSearchCallback<MovieModel.MovieResult>() {
+                        @Override
+                        public void complete(List<MovieModel.MovieResult> list) {
+                            if (list != null) {
+                                mFavoriteMoviesList = list;
+                            }
+                            else {
+                                mFavoriteMoviesList = new ArrayList<>();
+                            }
+                            onPostExecute( null );
+                        }
+                    });
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    dismissProgressView();
+                }
+            };
+
+            mFavoriteMoviesFetchTask.execute();
+        }
+        else {
+            if( mFavoriteMoviesList.size() == 0 ) {
+                mProgressLayout.setVisibility(View.GONE);
+                Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_favorites, Snackbar.LENGTH_SHORT).show();
+            }
+            else {
+                mMovieModel = new MovieModel();
+                mMovieModel.setMovieResults(mFavoriteMoviesList);
+                setupAdapter(mMovieModel.getMovieResults());
+            }
+        }
+
+    }
+
     private void getMoviesList( String filterString ) {
 
         mFilterString = filterString;
@@ -148,60 +219,12 @@ public class MovieGridViewFragment extends Fragment {
             mMovieGridRecyclerAdapter = null;
         }
         mProgressLayout.setVisibility(View.VISIBLE);
-        // Fetch from local DB
-        new RushSearch().find(MovieModel.MovieResult.class, new RushSearchCallback<MovieModel.MovieResult>() {
-            @Override
-            public void complete(List<MovieModel.MovieResult> list) {
-                if( list != null ) {
-                    mFavoriteMoviesList = list;
-                }
 
-                dismissProgressView();
-            }
-        });
-
-        if( filterString != null && filterString.equals(FILTER_FAVORITE) ) {
-
-            if( mFavoriteMoviesList != null && mFavoriteMoviesList.size() > 0 ) {
-                mMovieModel = new MovieModel();
-                mMovieModel.setMovieResults(mFavoriteMoviesList);
-                if (mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0) {
-                    setupAdapter(mMovieModel.getMovieResults());
-                } else {
-                    dismissProgressView();
-                    Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_results, Snackbar.LENGTH_SHORT).show();
-                }
-            }
-            else {
-                dismissProgressView();
-                Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_favorites, Snackbar.LENGTH_SHORT).show();
-            }
-
-
+        if( filterString == null || !filterString.equals(FILTER_FAVORITE) ) {
+            getMovies( filterString );
         }
         else {
-            mMovieServiceInterface.getMoviesList(filterString, new Callback<MovieModel>() {
-                @Override
-                public void success(MovieModel movieModel, Response response) {
-                    if (movieModel != null) {
-                        mMovieModel = movieModel;
-                        if (movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0) {
-                            setupAdapter(movieModel.getMovieResults());
-                        } else {
-                            dismissProgressView();
-                            Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_results, Snackbar.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        dismissProgressView();
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.e(TAG, "Error : " + error.getMessage());
-                    dismissProgressView();
-                }
-            });
+            getFavoriteMovies();
         }
 
     }
@@ -209,7 +232,6 @@ public class MovieGridViewFragment extends Fragment {
     private void dismissProgressView() {
         if (isOtherTaskFinished) {
             mProgressLayout.setVisibility(View.GONE);
-            isOtherTaskFinished = false;
         } else {
             isOtherTaskFinished = true;
         }
@@ -239,7 +261,7 @@ public class MovieGridViewFragment extends Fragment {
             mMovieGridRecyclerView.getLayoutManager().scrollToPosition(mScrollPosition);
             mScrollPosition = -1;
         }
-        dismissProgressView();
+        mProgressLayout.setVisibility(View.GONE);
 
     }
 
@@ -248,6 +270,14 @@ public class MovieGridViewFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if( mFavoriteMoviesFetchTask != null && mFavoriteMoviesFetchTask.getStatus() == AsyncTask.Status.RUNNING )
+            mFavoriteMoviesFetchTask.cancel(true);
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -316,12 +346,12 @@ public class MovieGridViewFragment extends Fragment {
         if( mFilterString.equals(FILTER_FAVORITE) ) {
             if( isFavorite ) {
                 mMovieModel.setMovieResults( mFavoriteMoviesList );
-                mMovieResultList.add( movieResult );
+                mMovieResultList.add(movieResult);
                 mMovieGridRecyclerAdapter.notifyDataSetChanged();
             }
             else {
                 mMovieModel.setMovieResults( mFavoriteMoviesList );
-                mMovieResultList.remove( movieResult );
+                mMovieResultList.remove(movieResult);
                 mMovieGridRecyclerAdapter.notifyDataSetChanged();
             }
         }
