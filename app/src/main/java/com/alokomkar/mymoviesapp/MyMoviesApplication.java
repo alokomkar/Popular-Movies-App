@@ -24,6 +24,10 @@ public class MyMoviesApplication extends Application {
 
         application = this;
 
+        // http://www.rushorm.com/
+        // Rush is initialized asynchronously to recieve a callback after it initialized
+        // set an InitializeListener on the config object
+
         AndroidInitializeConfig config = new AndroidInitializeConfig(getApplicationContext());
         List<Class<? extends Rush>> classList = new ArrayList<>();
         classList.add(MovieModel.MovieResult.class);

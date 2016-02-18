@@ -31,7 +31,6 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import co.uk.rushorm.core.RushSearch;
-import co.uk.rushorm.core.RushSearchCallback;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -66,7 +65,7 @@ public class MovieGridViewFragment extends Fragment {
     private List<MovieModel.MovieResult> mFavoriteMoviesList;
 
     private boolean isOtherTaskFinished = false;
-    private AsyncTask<Void, Void, Void> mFavoriteMoviesFetchTask;
+    private AsyncTask<Void, Void, List<MovieModel.MovieResult>> mFavoriteMoviesFetchTask;
 
     public MovieGridViewFragment() {
         // Required empty public constructor
@@ -166,34 +165,34 @@ public class MovieGridViewFragment extends Fragment {
     }
 
     private void getFavoriteMovies() {
+
         if( mFavoriteMoviesList == null ) {
-            mFavoriteMoviesFetchTask = new AsyncTask<Void, Void, Void>() {
+
+            mFavoriteMoviesFetchTask = new AsyncTask<Void, Void, List<MovieModel.MovieResult>>() {
+
+                private List<MovieModel.MovieResult> movieList;
                 @Override
-                protected Void doInBackground(Void... params) {
+                protected List<MovieModel.MovieResult> doInBackground(Void... params) {
                     // Fetch from local DB
-                    new RushSearch().find(MovieModel.MovieResult.class, new RushSearchCallback<MovieModel.MovieResult>() {
-                        @Override
-                        public void complete(List<MovieModel.MovieResult> list) {
-                            if (list != null) {
-                                mFavoriteMoviesList = list;
-                            }
-                            else {
-                                mFavoriteMoviesList = new ArrayList<>();
-                            }
-                            onPostExecute( null );
-                        }
-                    });
-                    return null;
+                    movieList = new RushSearch().find(MovieModel.MovieResult.class);
+                    return movieList;
                 }
 
                 @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
+                protected void onPostExecute(List<MovieModel.MovieResult> movieResults) {
+                    super.onPostExecute(movieResults);
+                    if( movieResults != null ) {
+                        mFavoriteMoviesList = movieList;
+                    }
+                    else {
+                        mFavoriteMoviesList = new ArrayList<>();
+                    }
                     dismissProgressView();
                 }
             };
 
             mFavoriteMoviesFetchTask.execute();
+
         }
         else {
             if( mFavoriteMoviesList.size() == 0 ) {
@@ -252,7 +251,13 @@ public class MovieGridViewFragment extends Fragment {
                 }
             });
             mMovieGridRecyclerView.setAdapter(mMovieGridRecyclerAdapter);
-            mOnMovieClickListener.loadDefaultMovie( mMovieGridRecyclerAdapter.getItem(0), mFavoriteMoviesList.contains(mMovieGridRecyclerAdapter.getItem(0)) );
+            if( mFavoriteMoviesList != null ) {
+                mOnMovieClickListener.loadDefaultMovie( mMovieGridRecyclerAdapter.getItem(0), mFavoriteMoviesList.contains(mMovieGridRecyclerAdapter.getItem(0)) );
+            }
+            else {
+                mOnMovieClickListener.loadDefaultMovie( mMovieGridRecyclerAdapter.getItem(0), false );
+            }
+
         } else {
             mMovieResultList.addAll(movieResults);
             mMovieGridRecyclerAdapter.notifyDataSetChanged();
@@ -274,7 +279,7 @@ public class MovieGridViewFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        if( mFavoriteMoviesFetchTask != null && mFavoriteMoviesFetchTask.getStatus() == AsyncTask.Status.RUNNING )
+        if( mFavoriteMoviesFetchTask != null && mFavoriteMoviesFetchTask.getStatus() == AsyncTask.Status.RUNNING)
             mFavoriteMoviesFetchTask.cancel(true);
     }
 

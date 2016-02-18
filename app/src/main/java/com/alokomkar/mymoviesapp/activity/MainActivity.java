@@ -33,13 +33,6 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // http://www.rushorm.com/
-        // Rush is initialized asynchronously to recieve a callback after it initialized
-        // set an InitializeListener on the config object
-
-
-
-
         if( findViewById(R.id.moviesDetailFrameLayout) != null ) {
             mTwoPaneMode = true;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
