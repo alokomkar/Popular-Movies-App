@@ -14,6 +14,8 @@ import com.alokomkar.mymoviesapp.interfaces.OnFavoriteClickListener;
 import com.alokomkar.mymoviesapp.interfaces.OnMovieClickListener;
 import com.alokomkar.mymoviesapp.models.MovieModel;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements OnMovieClickListener, OnFavoriteClickListener {
 
     private static final String TWO_PANE_MODE = "two_pane_mode";
@@ -24,8 +26,11 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     private boolean mTwoPaneMode = false;
     private String mFilterString;
     private MovieModel mMovieModel;
+    private MovieModel mFavoriteMovieModel;
     private int mScrollPosition = -1;
+    private int mFavroiteScrollPosition = -1;
     public static final String IS_FAVORITE = "isFavorite";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
                     setTitle(savedInstanceState.getString(MOVIE_TITLE, getResources().getString(R.string.app_name)));
                     mFilterString = savedInstanceState.getString(MovieGridViewFragment.FILTER_SELECTED, null);
                     mMovieModel = savedInstanceState.getParcelable(MovieGridViewFragment.MOVIES_LIST);
+                    mFavoriteMovieModel = savedInstanceState.getParcelable(MovieGridViewFragment.FAVORITE_MOVIES_LIST);
                     mScrollPosition = savedInstanceState.getInt(MovieGridViewFragment.SCROLL_POSITION, -1);
                 }
             }
@@ -68,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         outState.putString(MOVIE_TITLE, getTitle().toString());
         outState.putString(MovieGridViewFragment.FILTER_SELECTED, mFilterString);
         outState.putParcelable(MovieGridViewFragment.MOVIES_LIST, mMovieModel);
+        outState.putParcelable(MovieGridViewFragment.FAVORITE_MOVIES_LIST, mFavoriteMovieModel);
         outState.putInt(MovieGridViewFragment.SCROLL_POSITION, mScrollPosition);
     }
 
@@ -83,13 +90,23 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             bundle.putParcelable( MovieGridViewFragment.MOVIES_LIST, mMovieModel );
             mFragment.setArguments(bundle);
         }
+        if( mFavoriteMovieModel != null ) {
+            bundle.putParcelable( MovieGridViewFragment.FAVORITE_MOVIES_LIST, mFavoriteMovieModel );
+            mFragment.setArguments(bundle);
+        }
         if( mFilterString != null ) {
-            bundle.putString( MovieGridViewFragment.FILTER_SELECTED, mFilterString );
+            bundle.putString(MovieGridViewFragment.FILTER_SELECTED, mFilterString);
             mFragment.setArguments(bundle);
         }
         if( mScrollPosition != -1 ) {
-            bundle.putInt( MovieGridViewFragment.SCROLL_POSITION, mScrollPosition );
+            bundle.putInt(MovieGridViewFragment.SCROLL_POSITION, mScrollPosition);
             mFragment.setArguments(bundle);
+        }
+        if( mFilterString != null && mFilterString.equals(MovieGridViewFragment.FILTER_FAVORITE) ) {
+            if( mFavroiteScrollPosition != -1 ) {
+                bundle.putInt(MovieGridViewFragment.SCROLL_POSITION, mFavroiteScrollPosition);
+                mFragment.setArguments(bundle);
+            }
         }
         mFragmentTransaction.replace(R.id.moviesFrameLayout, mFragment, MovieGridViewFragment.class.getSimpleName());
         mFragmentTransaction.commit();
@@ -138,11 +155,18 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     }
 
     @Override
-    public void storeFragmentParams(String filterString, MovieModel movieModel, int scrollPosition) {
+    public void storeFragmentParams(String filterString, MovieModel movieModel, MovieModel favoriteMovieModel, int scrollPosition) {
         //TODO : NOTE : Find a better way to handle state changes
         this.mFilterString = filterString;
         this.mMovieModel = movieModel;
+        this.mFavoriteMovieModel = favoriteMovieModel;
         this.mScrollPosition = scrollPosition;
+        if( mFilterString != null && mFilterString.equals(MovieGridViewFragment.FILTER_FAVORITE) ) {
+            mFavroiteScrollPosition = scrollPosition;
+        }
+        else {
+            mFavroiteScrollPosition = -1;
+        }
     }
 
 
@@ -178,6 +202,17 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
 
     @Override
     public void onFavoriteClick(MovieModel.MovieResult movieResult, boolean isFavorite) {
+
+        if( mFavoriteMovieModel == null ) {
+            mFavoriteMovieModel = new MovieModel();
+        }
+
+        if( mFavoriteMovieModel.getMovieResults() == null ) {
+            mFavoriteMovieModel.setMovieResults( new ArrayList<MovieModel.MovieResult>() );
+        }
+
+        if( isFavorite ) mFavoriteMovieModel.getMovieResults().add( movieResult );
+        else mFavoriteMovieModel.getMovieResults().remove(movieResult);
 
         if(  mTwoPaneMode ) {
             mFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_movie_grid);

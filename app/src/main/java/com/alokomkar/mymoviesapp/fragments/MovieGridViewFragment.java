@@ -55,7 +55,7 @@ public class MovieGridViewFragment extends Fragment {
     public static final String SCROLL_POSITION = "scroll_position";
     private static final String FILTER_MOST_POPULAR = "popularity.desc";
     private static final String FILTER_HIGHEST_RATED = "vote_average.desc";
-    private static final String FILTER_FAVORITE = "favorite";
+    public static final String FILTER_FAVORITE = "favorite";
 
 
     private static final String TAG = MovieGridViewFragment.class.getSimpleName();
@@ -98,6 +98,7 @@ public class MovieGridViewFragment extends Fragment {
         mMovieGridRecyclerView.setHasFixedSize(true);
         mMovieServiceInterface = NetworkApiGenerator.createService(MovieServiceInterface.class);
 
+        mFavoriteMovieModel = new MovieModel();
         Bundle bundle = getArguments();
         if( bundle == null ) {
             if( savedInstanceState == null ) {
@@ -106,26 +107,37 @@ public class MovieGridViewFragment extends Fragment {
                 getMovies( null );
             }
             else {
-                mFilterString = savedInstanceState.getString(FILTER_SELECTED, null);
-                mMovieModel = savedInstanceState.getParcelable(MOVIES_LIST);
-                mFavoriteMovieModel = savedInstanceState.getParcelable(FAVORITE_MOVIES_LIST);
-
-                if( mFavoriteMovieModel != null && mFavoriteMovieModel.getMovieResults() != null )
-                    mFavoriteMoviesList = mFavoriteMovieModel.getMovieResults();
-
-                if( mMovieModel != null && mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0 ) {
-                    setupAdapter( mMovieModel.getMovieResults() );
-                }
-                else {
-                    getMoviesList(mFilterString);
-                }
-
+                parseBundle( savedInstanceState );
             }
         }
         else {
-            mFilterString = bundle.getString(FILTER_SELECTED, null);
-            mMovieModel = bundle.getParcelable( MOVIES_LIST );
-            mScrollPosition = bundle.getInt( SCROLL_POSITION, -1 );
+            mScrollPosition = bundle.getInt(SCROLL_POSITION, -1);
+            parseBundle( bundle );
+        }
+
+        return view;
+    }
+
+    private void parseBundle(Bundle bundle) {
+        mFilterString = bundle.getString(FILTER_SELECTED, null);
+        mMovieModel = bundle.getParcelable(MOVIES_LIST);
+        mFavoriteMovieModel = bundle.getParcelable(FAVORITE_MOVIES_LIST);
+
+        if( mFavoriteMovieModel != null && mFavoriteMovieModel.getMovieResults() != null )
+            mFavoriteMoviesList = mFavoriteMovieModel.getMovieResults();
+
+        if( mFilterString != null && mFilterString.equals(FILTER_FAVORITE) ) {
+            if( mFavoriteMoviesList != null && mFavoriteMoviesList.size() > 0 ) {
+                mMovieModel = new MovieModel();
+                mMovieModel.setMovieResults( mFavoriteMoviesList );
+                setupAdapter( mMovieModel.getMovieResults() );
+            }
+            else {
+                mFavoriteMoviesList = null;
+                getFavoriteMovies();
+            }
+        }
+        else {
             if( mMovieModel != null && mMovieModel.getMovieResults() != null && mMovieModel.getMovieResults().size() > 0 ) {
                 setupAdapter( mMovieModel.getMovieResults() );
             }
@@ -133,10 +145,6 @@ public class MovieGridViewFragment extends Fragment {
                 getMoviesList(mFilterString);
             }
         }
-
-
-
-        return view;
     }
 
     private void getMovies( String filterString ) {
@@ -182,7 +190,7 @@ public class MovieGridViewFragment extends Fragment {
                 protected void onPostExecute(List<MovieModel.MovieResult> movieResults) {
                     super.onPostExecute(movieResults);
                     if( movieResults != null ) {
-                        mFavoriteMoviesList = movieList;
+                        mFavoriteMoviesList = movieResults;
                     }
                     else {
                         mFavoriteMoviesList = new ArrayList<>();
@@ -246,7 +254,7 @@ public class MovieGridViewFragment extends Fragment {
                 public void onItemClick(View itemView, int itemPosition) {
                     MovieModel.MovieResult movieResult = mMovieGridRecyclerAdapter.getItem(itemPosition);
                     mOnMovieClickListener.onMovieClick(movieResult, mFavoriteMoviesList.contains(movieResult));
-                    mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, itemPosition);
+                    mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, mFavoriteMovieModel, itemPosition);
                     mScrollPosition = itemPosition;
                 }
             });
@@ -333,14 +341,16 @@ public class MovieGridViewFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putString(FILTER_SELECTED, mFilterString);
         outState.putParcelable(MOVIES_LIST, mMovieModel);
-        mFavoriteMovieModel = new MovieModel();
         mFavoriteMovieModel.setMovieResults( mFavoriteMoviesList );
         outState.putParcelable(FAVORITE_MOVIES_LIST, mFavoriteMovieModel);
     }
 
     public void onFavoriteClick(MovieModel.MovieResult movieResult, boolean isFavorite) {
 
-        if( isFavorite ) mFavoriteMoviesList.add( movieResult );
+        if( isFavorite ) {
+            if( !mFavoriteMoviesList.contains(movieResult) )
+                mFavoriteMoviesList.add( movieResult );
+        }
         else mFavoriteMoviesList.remove( movieResult );
 
         if( mFavoriteMovieModel == null ) {
@@ -350,14 +360,26 @@ public class MovieGridViewFragment extends Fragment {
 
         if( mFilterString.equals(FILTER_FAVORITE) ) {
             if( isFavorite ) {
-                mMovieModel.setMovieResults( mFavoriteMoviesList );
+                mMovieModel.setMovieResults(mFavoriteMoviesList);
                 mMovieResultList.add(movieResult);
-                mMovieGridRecyclerAdapter.notifyDataSetChanged();
+                if( mMovieGridRecyclerAdapter != null ) {
+                    mMovieGridRecyclerAdapter.notifyDataSetChanged();
+                }
+                else {
+                    setupAdapter(mMovieModel.getMovieResults());
+                }
             }
             else {
-                mMovieModel.setMovieResults( mFavoriteMoviesList );
+                mMovieModel.setMovieResults(mFavoriteMoviesList);
                 mMovieResultList.remove(movieResult);
-                mMovieGridRecyclerAdapter.notifyDataSetChanged();
+                if( mMovieGridRecyclerAdapter != null ) {
+                    mMovieGridRecyclerAdapter.notifyDataSetChanged();
+                    if( mMovieGridRecyclerAdapter.getItemCount() > 0 )
+                        mOnMovieClickListener.loadDefaultMovie( mMovieGridRecyclerAdapter.getItem(0), true );
+                }
+                else {
+                    setupAdapter(mMovieModel.getMovieResults());
+                }
             }
         }
     }
