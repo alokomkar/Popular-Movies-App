@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
             bundle.putParcelable( MovieGridViewFragment.MOVIES_LIST, mMovieModel );
             mFragment.setArguments(bundle);
         }
-        if( mFavoriteMovieModel != null ) {
+        if( mFavoriteMovieModel != null && mFavoriteMovieModel.getMovieResults() != null && mFavoriteMovieModel.getMovieResults().size() > 0) {
             bundle.putParcelable( MovieGridViewFragment.FAVORITE_MOVIES_LIST, mFavoriteMovieModel );
             mFragment.setArguments(bundle);
         }
