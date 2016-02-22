@@ -155,11 +155,8 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
     }
 
     @Override
-    public void storeFragmentParams(String filterString, MovieModel movieModel, MovieModel favoriteMovieModel, int scrollPosition) {
-        //TODO : NOTE : Find a better way to handle state changes
+    public void storeFragmentParams(String filterString, int scrollPosition) {
         this.mFilterString = filterString;
-        this.mMovieModel = movieModel;
-        this.mFavoriteMovieModel = favoriteMovieModel;
         this.mScrollPosition = scrollPosition;
         if( mFilterString != null && mFilterString.equals(MovieGridViewFragment.FILTER_FAVORITE) ) {
             mFavroiteScrollPosition = scrollPosition;
@@ -167,6 +164,16 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         else {
             mFavroiteScrollPosition = -1;
         }
+    }
+
+    @Override
+    public void storeMovies(MovieModel movieModel) {
+        this.mMovieModel = movieModel;
+    }
+
+    @Override
+    public void storeFavorites(MovieModel favoriteMovieModel) {
+        this.mFavoriteMovieModel = favoriteMovieModel;
     }
 
 
@@ -179,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements OnMovieClickListe
         else {
 
             if( !getTitle().toString().equals(getResources().getString(R.string.app_name)) ) {
-                //TODO : NOTE : Find a better way : Since unable to make popbackstack() or popbackstackImmeidate() work as desired.
                 loadMoviesGridFragment();
             }
             else {

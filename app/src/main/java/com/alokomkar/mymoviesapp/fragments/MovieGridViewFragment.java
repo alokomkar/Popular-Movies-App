@@ -130,8 +130,8 @@ public class MovieGridViewFragment extends Fragment {
         if( mFilterString != null && mFilterString.equals(FILTER_FAVORITE) ) {
             if( mFavoriteMoviesList != null && mFavoriteMoviesList.size() > 0 ) {
                 mMovieModel = new MovieModel();
-                mMovieModel.setMovieResults( mFavoriteMoviesList );
-                setupAdapter( mMovieModel.getMovieResults() );
+                mMovieModel.setMovieResults(mFavoriteMoviesList);
+                setupAdapter(mMovieModel.getMovieResults());
             }
             else {
                 mFavoriteMoviesList = null;
@@ -154,6 +154,14 @@ public class MovieGridViewFragment extends Fragment {
             public void success(MovieModel movieModel, Response response) {
                 if (movieModel != null) {
                     mMovieModel = movieModel;
+                    if( mMovieResultList == null ) {
+                        mMovieResultList = new ArrayList<MovieModel.MovieResult>();
+                    }
+                    mMovieResultList.clear();
+                    if( movieModel.getMovieResults() != null ) {
+                        mMovieResultList.addAll(movieModel.getMovieResults());
+                    }
+                    mOnMovieClickListener.storeMovies( mMovieModel );
                     if (movieModel.getMovieResults() != null && movieModel.getMovieResults().size() > 0) {
                         setupAdapter(movieModel.getMovieResults());
                     } else {
@@ -201,11 +209,13 @@ public class MovieGridViewFragment extends Fragment {
                     if( mFavoriteMoviesList.size() == 0 && mFilterString.equals(FILTER_FAVORITE) ) {
                         mProgressLayout.setVisibility(View.GONE);
                     }
+                    mOnMovieClickListener.storeFavorites( mFavoriteMovieModel );
                     dismissProgressView();
                     if( mFilterString.equals(FILTER_FAVORITE) ) {
                         mMovieModel = new MovieModel();
                         mMovieModel.setMovieResults( mFavoriteMoviesList );
-                        setupAdapter( mMovieModel.getMovieResults() );
+                        mOnMovieClickListener.storeMovies( mMovieModel );
+                        setupAdapter(mMovieModel.getMovieResults());
                     }
                 }
             };
@@ -216,12 +226,14 @@ public class MovieGridViewFragment extends Fragment {
         else {
             if( mFavoriteMoviesList.size() == 0 ) {
                 mProgressLayout.setVisibility(View.GONE);
-                mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, mFavoriteMovieModel, -1);
+                mOnMovieClickListener.storeFragmentParams(mFilterString, -1);
                 Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_favorites, Snackbar.LENGTH_SHORT).show();
             }
             else {
                 mMovieModel = new MovieModel();
                 mMovieModel.setMovieResults(mFavoriteMoviesList);
+                mOnMovieClickListener.storeMovies( mMovieModel );
+                mOnMovieClickListener.storeFavorites( mMovieModel );
                 setupAdapter(mMovieModel.getMovieResults());
             }
         }
@@ -275,11 +287,11 @@ public class MovieGridViewFragment extends Fragment {
                         mOnMovieClickListener.onMovieClick(movieResult, (mFilterString != null && mFilterString.equals(FILTER_FAVORITE)));
                     }
 
-                    mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, mFavoriteMovieModel, itemPosition);
+                    storeParameters( mFilterString, itemPosition );
                     mScrollPosition = itemPosition;
                 }
             });
-            mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, mFavoriteMovieModel, -1);
+            storeParameters( mFilterString, -1 );
             mMovieGridRecyclerView.setAdapter(mMovieGridRecyclerAdapter);
             if( mMovieGridRecyclerAdapter.getItemCount() > 0 ) {
                 if( mFavoriteMoviesList != null ) {
@@ -294,7 +306,8 @@ public class MovieGridViewFragment extends Fragment {
         } else {
             mMovieResultList.addAll(movieResults);
             mMovieGridRecyclerAdapter.notifyDataSetChanged();
-            mOnMovieClickListener.storeFragmentParams(mFilterString, mMovieModel, mFavoriteMovieModel, -1);
+            storeParameters(mFilterString, -1);
+
         }
         if( mScrollPosition != -1 ) {
             mMovieGridRecyclerView.getLayoutManager().scrollToPosition(mScrollPosition);
@@ -302,6 +315,29 @@ public class MovieGridViewFragment extends Fragment {
         }
         mProgressLayout.setVisibility(View.GONE);
 
+    }
+
+    private void storeParameters(String filterString, int i) {
+        mOnMovieClickListener.storeFragmentParams(filterString, i);
+        if( filterString != null && filterString.equals(FILTER_FAVORITE) ) {
+            if( mFavoriteMovieModel == null ) {
+                mFavoriteMovieModel = new MovieModel();
+            }
+            mFavoriteMovieModel.setMovieResults(mMovieResultList);
+            if( mFavoriteMoviesList == null ) {
+                mFavoriteMoviesList = new ArrayList<>();
+            }
+            mFavoriteMoviesList.clear();
+            mFavoriteMoviesList.addAll( mMovieResultList );
+            mOnMovieClickListener.storeFavorites( mFavoriteMovieModel );
+        }
+        else {
+            if( mMovieModel == null ) {
+                mMovieModel = new MovieModel();
+            }
+            mMovieModel.setMovieResults(mMovieResultList);
+            mOnMovieClickListener.storeMovies( mMovieModel );
+        }
     }
 
     @Override

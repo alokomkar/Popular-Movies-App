@@ -8,5 +8,7 @@ import com.alokomkar.mymoviesapp.models.MovieModel;
 public interface OnMovieClickListener {
     void onMovieClick( MovieModel.MovieResult movieResult, boolean isFavorite );
     void loadDefaultMovie( MovieModel.MovieResult movieResult, boolean isFavorite );
-    void storeFragmentParams(String filterString, MovieModel movieModel, MovieModel favoriteMovieModel, int scrollPosition);
+    void storeFragmentParams(String filterString, int scrollPosition);
+    void storeMovies( MovieModel movieModel );
+    void storeFavorites( MovieModel favoriteMovieModel );
 }
