@@ -38,6 +38,7 @@ import com.alokomkar.mymoviesapp.interfaces.retrofit.MovieServiceInterface;
 import com.alokomkar.mymoviesapp.models.MovieModel;
 import com.alokomkar.mymoviesapp.models.ReviewsModel;
 import com.alokomkar.mymoviesapp.models.TrailerModel;
+import com.alokomkar.mymoviesapp.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -286,6 +287,18 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void fetchReviews() {
+        if( !NetworkUtils.isConnected(getActivity()) ) {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_internet, Snackbar.LENGTH_SHORT).show();
+            mMovieTrailerRecyclerView.setVisibility(View.GONE);
+            mNoTrailersTextView.setVisibility(View.VISIBLE);
+            mNoReviewsTextView.setVisibility(View.VISIBLE);
+            return;
+        }
+        else {
+            mMovieTrailerRecyclerView.setVisibility(View.VISIBLE);
+            mNoReviewsTextView.setVisibility(View.GONE);
+            mNoTrailersTextView.setVisibility(View.GONE);
+        }
         mMovieServiceInterface.getReviews(String.valueOf(mMovieResult.getMovieId()), new Callback<ReviewsModel>() {
             @Override
             public void success(ReviewsModel reviewsModel, Response response) {
@@ -316,6 +329,7 @@ public class MovieDetailsFragment extends Fragment {
 
     private void setupReviews() {
 
+
         if( mReviewsLayout != null ) {
             mReviewsLayout.removeAllViews();
             LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
@@ -335,6 +349,16 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void fetchTrailers() {
+
+        if( !NetworkUtils.isConnected(getActivity()) ) {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_internet, Snackbar.LENGTH_SHORT).show();
+            return;
+        }
+        else {
+            mMovieTrailerRecyclerView.setVisibility(View.VISIBLE);
+            mNoReviewsTextView.setVisibility(View.GONE);
+            mNoTrailersTextView.setVisibility(View.GONE);
+        }
         mMovieServiceInterface.getTrailers(String.valueOf(mMovieResult.getMovieId()), new Callback<TrailerModel>() {
             @Override
             public void success(TrailerModel trailerModel, Response response) {

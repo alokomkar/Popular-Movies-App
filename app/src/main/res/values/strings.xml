@@ -22,4 +22,5 @@
     <string name="no_favorites">No favorites yet</string>
     <string name="share_trailer">Share Trailer</string>
     <string name="no_trailers_to_share">No Trailers to share yet</string>
+    <string name="no_internet">No internet available</string>
 </resources>

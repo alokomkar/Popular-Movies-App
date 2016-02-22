@@ -24,6 +24,7 @@ import com.alokomkar.mymoviesapp.interfaces.OnItemClickListener;
 import com.alokomkar.mymoviesapp.interfaces.OnMovieClickListener;
 import com.alokomkar.mymoviesapp.interfaces.retrofit.MovieServiceInterface;
 import com.alokomkar.mymoviesapp.models.MovieModel;
+import com.alokomkar.mymoviesapp.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +150,11 @@ public class MovieGridViewFragment extends Fragment {
     }
 
     private void getMovies( String filterString ) {
+        if( !NetworkUtils.isConnected(getActivity()) ) {
+            Snackbar.make(getActivity().findViewById(android.R.id.content), R.string.no_internet, Snackbar.LENGTH_SHORT).show();
+            mProgressLayout.setVisibility(View.GONE);
+            return;
+        }
         mMovieServiceInterface.getMoviesList(filterString, new Callback<MovieModel>() {
             @Override
             public void success(MovieModel movieModel, Response response) {
