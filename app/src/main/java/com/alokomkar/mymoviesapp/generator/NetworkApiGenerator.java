@@ -46,5 +46,7 @@ public class NetworkApiGenerator {
         return adapter.create(serviceClass);
 
     }
+    //Base api : https://en.wikipedia.org/w/api.php
+    //https://en.wikipedia.org/w/api.php?format=jsonfm&action=query&titles=Your%20Highness&prop=revisions&rvprop=content
 
 }
